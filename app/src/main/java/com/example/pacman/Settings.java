@@ -12,6 +12,13 @@ public class Settings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         hideSystemUI();
+        MainActivity.getMediaPlayer().start();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        MainActivity.getMediaPlayer().pause();
     }
 
     private void hideSystemUI() {

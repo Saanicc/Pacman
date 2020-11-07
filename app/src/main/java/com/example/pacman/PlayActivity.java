@@ -1,35 +1,19 @@
 package com.example.pacman;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.media.MediaPlayer;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
-public class About extends AppCompatActivity {
-
+public class PlayActivity extends Activity {
+private DrawGame drawGame;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
         hideSystemUI();
-        MainActivity.getMediaPlayer().start();
+        drawGame = new DrawGame(this);
+        setContentView(drawGame);
     }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        MainActivity.getMediaPlayer().pause();
-    }
-
-    public void homeButton(View view) {
-        Intent startActivityHomeButton = new Intent(this, MainActivity.class);
-        startActivity(startActivityHomeButton);
-
-    }
-
     private void hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
@@ -46,4 +30,15 @@ public class About extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
 }

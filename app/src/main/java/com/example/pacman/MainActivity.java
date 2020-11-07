@@ -1,18 +1,24 @@
 package com.example.pacman;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+    private static MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         hideSystemUI();
+        mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
+        mediaPlayer.setVolume(100,100);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
     }
 
     private void hideSystemUI() {
@@ -59,5 +65,26 @@ public class MainActivity extends AppCompatActivity {
         Intent startActivityHelp = new Intent(this, HelpActivity.class);
         startActivity(startActivityHelp);
 
+    }
+
+    public void startGame(View view){
+        Intent startGame = new Intent(this, PlayActivity.class);
+        startActivity(startGame);
+    }
+
+    public static MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        mediaPlayer.pause();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        mediaPlayer.start();
     }
 }
