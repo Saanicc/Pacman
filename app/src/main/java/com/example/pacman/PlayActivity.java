@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 public class PlayActivity extends Activity {
-private DrawGame drawGame;
+    private DrawGame drawGame;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -13,6 +13,7 @@ private DrawGame drawGame;
         hideSystemUI();
         drawGame = new DrawGame(this);
         setContentView(drawGame);
+        MainActivity.getMediaPlayer().start();
     }
     private void hideSystemUI() {
         // Enables regular immersive mode.
@@ -27,7 +28,6 @@ private DrawGame drawGame;
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 

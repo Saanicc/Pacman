@@ -24,12 +24,6 @@ public class About extends AppCompatActivity {
         MainActivity.getMediaPlayer().pause();
     }
 
-    public void homeButton(View view) {
-        Intent startActivityHomeButton = new Intent(this, MainActivity.class);
-        startActivity(startActivityHomeButton);
-
-    }
-
     private void hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
@@ -43,7 +37,6 @@ public class About extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 }
