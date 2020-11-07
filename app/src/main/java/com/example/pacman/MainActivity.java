@@ -44,15 +44,20 @@ public class MainActivity extends AppCompatActivity {
     }*/
 
 
-    public void startSettingsActivity(View view){
+    public void startSettingsActivity(View view) {
         Intent settings = new Intent(this, Settings.class);
         startActivity(settings);
     }
 
-    public void startActivityAbout(View view){
+    public void startActivityAbout(View view) {
         Intent startActivityAbout = new Intent(this, About.class);
         startActivity(startActivityAbout);
 
     }
 
+    public void startHelp(View view) {
+        Intent startActivityHelp = new Intent(this, HelpActivity.class);
+        startActivity(startActivityHelp);
+
+    }
 }
