@@ -7,4 +7,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CustomSwitchTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/buttonNotPressed</item>
+        <item name="colorSwitchThumbNormal">#9F9F9F</item>
+    </style>
+
 </resources>

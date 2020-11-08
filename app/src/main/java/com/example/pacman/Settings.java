@@ -1,11 +1,16 @@
 package com.example.pacman;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
 
 public class Settings extends AppCompatActivity {
+    private MediaPlayer mediaPlayer;
+    private SwitchCompat switchCompat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -13,6 +18,18 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         hideSystemUI();
         MainActivity.getMediaPlayer().start();
+        switchCompat = findViewById(R.id.musicSwitch);
+
+        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    MainActivity.getMediaPlayer().start();
+                } else {
+                    MainActivity.getMediaPlayer().pause();
+                }
+            }
+        });
     }
 
     @Override
