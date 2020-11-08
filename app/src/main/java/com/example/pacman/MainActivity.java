@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         hideSystemUI();
         mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
-        mediaPlayer.setVolume(100,100);
+        mediaPlayer.setVolume(0,0);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }

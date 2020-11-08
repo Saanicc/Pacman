@@ -32,9 +32,10 @@
 
     <Button
         android:id="@+id/startButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="42.5dp"
         android:layout_marginTop="24dp"
+        android:background="@drawable/custom_button"
         android:onClick="startGame"
         android:text="New game"
         android:textAllCaps="false"
@@ -44,8 +45,10 @@
 
     <Button
         android:id="@+id/settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="42.5dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/custom_button"
         android:onClick="startSettingsActivity"
         android:text="Settings"
         android:textAllCaps="false"
@@ -56,8 +59,10 @@
 
     <Button
         android:id="@+id/about"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="42.5dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/custom_button"
         android:onClick="startActivityAbout"
         android:text="About"
         android:textAllCaps="false"
@@ -68,8 +73,10 @@
 
     <Button
         android:id="@+id/howToPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="42.5dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/custom_button"
         android:onClick="startHelp"
         android:text="How to play"
         android:textAllCaps="false"
@@ -82,12 +89,12 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:shadowColor="#F44336"
-        android:shadowDx="4"
-        android:shadowDy="8"
+        android:shadowColor="#FF3333"
+        android:shadowDx="5"
+        android:shadowDy="2"
         android:shadowRadius="2"
         android:text="PacMan"
-        android:textColor="#FFEB3B"
+        android:textColor="#FCDA5F"
         android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
