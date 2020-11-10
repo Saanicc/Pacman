@@ -11,21 +11,27 @@ import android.widget.CompoundButton;
 public class Settings extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private SwitchCompat switchCompat;
+    private SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         hideSystemUI();
         MainActivity.getMediaPlayer().start();
         switchCompat = findViewById(R.id.musicSwitch);
 
+        loadMusicSettings();
+
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    sharedPref.setMusicState(true);
                     MainActivity.getMediaPlayer().start();
                 } else {
+                    sharedPref.setMusicState(false);
                     MainActivity.getMediaPlayer().pause();
                 }
             }
@@ -52,6 +58,16 @@ public class Settings extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    public void loadMusicSettings() {
+        if (sharedPref.loadMusicState()) {
+            switchCompat.setChecked(true);
+            MainActivity.getMediaPlayer().start();
+        } else if (!sharedPref.loadMusicState()) {
+            switchCompat.setChecked(false);
+            MainActivity.getMediaPlayer().pause();
+        }
     }
 
 }

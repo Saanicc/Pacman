@@ -9,16 +9,37 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static MediaPlayer mediaPlayer;
+    private SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         hideSystemUI();
-        mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
-        mediaPlayer.setVolume(100, 100);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
+
+        if (sharedPref != null) {
+            if (sharedPref.loadMusicState()) {
+                mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
+                mediaPlayer.setVolume(100, 100);
+                mediaPlayer.setLooping(true);
+                mediaPlayer.start();
+            } else if (!sharedPref.loadMusicState()){
+                mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
+                mediaPlayer.setVolume(100, 100);
+                mediaPlayer.setLooping(true);
+                mediaPlayer.start();
+                mediaPlayer.pause();
+            }
+        } else {
+            mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
+            mediaPlayer.setVolume(100, 100);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.start();
+            sharedPref.setMusicState(true);
+        }
+
+
     }
 
     private void hideSystemUI() {
@@ -84,6 +105,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        mediaPlayer.start();
+        loadMusic();
+    }
+
+    public void loadMusic() {
+        if (sharedPref.loadMusicState()) {
+            mediaPlayer.start();
+        } else if (!sharedPref.loadMusicState()) {
+            mediaPlayer.pause();
+        }
     }
 }

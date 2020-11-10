@@ -6,14 +6,16 @@ import android.view.View;
 
 public class PlayActivity extends Activity {
     private DrawGame drawGame;
+    private SharedPref sharedPref;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
         super.onCreate(savedInstanceState);
         hideSystemUI();
         drawGame = new DrawGame(this);
         setContentView(drawGame);
-        MainActivity.getMediaPlayer().start();
+        loadMusic();
     }
     private void hideSystemUI() {
         // Enables regular immersive mode.
@@ -41,4 +43,11 @@ public class PlayActivity extends Activity {
         super.onResume();
     }
 
+    public void loadMusic() {
+        if (sharedPref.loadMusicState()) {
+            MainActivity.getMediaPlayer().start();
+        } else if (!sharedPref.loadMusicState()) {
+            MainActivity.getMediaPlayer().pause();
+        }
+    }
 }

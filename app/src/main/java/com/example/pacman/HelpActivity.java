@@ -7,13 +7,15 @@ import android.view.View;
 
 public class HelpActivity extends AppCompatActivity {
 
+    private SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
         hideSystemUI();
-        MainActivity.getMediaPlayer().start();
+        loadMusic();
     }
 
     @Override
@@ -36,5 +38,13 @@ public class HelpActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    public void loadMusic() {
+        if (sharedPref.loadMusicState()) {
+            MainActivity.getMediaPlayer().start();
+        } else if (!sharedPref.loadMusicState()) {
+            MainActivity.getMediaPlayer().pause();
+        }
     }
 }
