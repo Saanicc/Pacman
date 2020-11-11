@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
-public class PlayActivity extends Activity {
+public class GameActivity extends Activity {
     private DrawGame drawGame;
     private SharedPref sharedPref;
 
