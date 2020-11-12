@@ -31,7 +31,8 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
     private int yPosPacman;
     private int xPosGhost;
     private int yPosGhost;
-
+    private int currentScore = 20;
+    private Points points;
 
     public DrawGame(Context context) {
         super(context);
@@ -39,7 +40,7 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
         Thread thread = new Thread(this);
         thread.start();
         frameTicker = 1000 / totalFrame;
-
+        points = new Points(0,0);
         createTileMap();
 
 
@@ -65,6 +66,7 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
 //        xPosGhost = 4 * TILE_SIZE;
         xPosPacman = 9 * TILE_SIZE;
         yPosPacman = 13 * TILE_SIZE;
+        points.setHighScore(0);
     }
 
     @Override
@@ -86,7 +88,7 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
                 drawPacMan(canvas);
 
                 drawGhost(canvas);
-
+                updateScores(canvas);
                 holder.unlockCanvasAndPost(canvas);
             }
         }
@@ -101,6 +103,23 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
                 }
             }
         }
+    }
+
+    public void updateScores(Canvas canvas){
+        paint.setTextSize((float) (TILE_SIZE / 1.1));
+
+        if(currentScore > points.getHighScore()) {
+            points.setHighScore(currentScore);
+        }
+
+        String formattedHighScore = String.format("%05d", points.getHighScore());
+        String hScore = "High Score :" + formattedHighScore;
+        canvas.drawText(hScore, 0, (float) (TILE_SIZE * 1.8), paint);
+
+        String formattedScore = String.format("%05d", points.getScore());
+        String score = "Score :" + formattedScore;
+        canvas.drawText(score, (float) (TILE_SIZE * 11.6), (float) (TILE_SIZE * 1.8), paint);
+
     }
 
     private void updateFrame(long gameTime) {
