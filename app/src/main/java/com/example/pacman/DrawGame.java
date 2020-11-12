@@ -26,14 +26,18 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
     private long frameTicker;
     private int totalFrame = 4;
     private int viewDirection = 2;
+    private int ghostDirection;
     private Bitmap[] pacManUp, pacManRight, pacManDown, pacManLeft;
     private Bitmap walls, floor;
+    private Bitmap ghostBitmap;
     private Paint paint;
     private int currentPacManFrame = 0;
     private int xPosPacman;
     private int yPosPacman;
     private int xPosGhost;
     private int yPosGhost;
+    private int xDistance;
+    private int yDistance;
 
 
 
@@ -56,7 +60,9 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
         TILE_SIZE = screenWidth / 17;
         loadBitmapImages();
         Log.d("TEST", String.valueOf(TILE_SIZE));
-
+        ghostDirection = 4;
+        yPosGhost = 4 * TILE_SIZE;
+        xPosGhost = 8 * TILE_SIZE;
         xPosPacman = 9 * TILE_SIZE;
         yPosPacman = 13 * TILE_SIZE;
     }
@@ -71,12 +77,117 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
             Canvas canvas = holder.lockCanvas();
             if (canvas != null) {
                 drawMap(canvas);
+                moveGhost(canvas);
                 drawPacMan(canvas);
                 drawPellets(canvas);
                 updateFrame(System.currentTimeMillis());
                 holder.unlockCanvasAndPost(canvas);
             }
         }
+    }
+
+    public void moveGhost(Canvas canvas) {
+        short ch;
+
+        xDistance = xPosPacman - xPosGhost;
+        yDistance = yPosPacman - yPosGhost;
+
+        if ((xPosGhost % TILE_SIZE == 0) && (yPosGhost % TILE_SIZE == 0)) {
+            ch = (short) tileMap[yPosGhost / TILE_SIZE][xPosGhost / TILE_SIZE];
+
+            if (xPosGhost >= TILE_SIZE * 17) {
+                xPosGhost = 0;
+            }
+            if (xPosGhost < 0) {
+                xPosGhost = TILE_SIZE * 17;
+            }
+
+
+            if (xDistance >= 0 && yDistance >= 0) { // Move right and down
+                if ((ch & 4) == 0 && (ch & 8) == 0) {
+                    if (Math.abs(xDistance) > Math.abs(yDistance)) {
+                        ghostDirection = 1;
+                    } else {
+                        ghostDirection = 2;
+                    }
+                }
+                else if ((ch & 4) == 0) {
+                    ghostDirection = 1;
+                }
+                else if ((ch & 8) == 0) {
+                    ghostDirection = 2;
+                }
+                else
+                    ghostDirection = 3;
+            }
+            if (xDistance >= 0 && yDistance <= 0) { // Move right and up
+                if ((ch & 4) == 0 && (ch & 2) == 0 ) {
+                    if (Math.abs(xDistance) > Math.abs(yDistance)) {
+                        ghostDirection = 1;
+                    } else {
+                        ghostDirection = 0;
+                    }
+                }
+                else if ((ch & 4) == 0) {
+                    ghostDirection = 1;
+                }
+                else if ((ch & 2) == 0) {
+                    ghostDirection = 0;
+                }
+                else ghostDirection = 2;
+            }
+            if (xDistance <= 0 && yDistance >= 0) { // Move left and down
+                if ((ch & 1) == 0 && (ch & 8) == 0) {
+                    if (Math.abs(xDistance) > Math.abs(yDistance)) {
+                        ghostDirection = 3;
+                    } else {
+                        ghostDirection = 2;
+                    }
+                }
+                else if ((ch & 1) == 0) {
+                    ghostDirection = 3;
+                }
+                else if ((ch & 8) == 0) {
+                    ghostDirection = 2;
+                }
+                else ghostDirection = 1;
+            }
+            if (xDistance <= 0 && yDistance <= 0) { // Move left and up
+                if ((ch & 1) == 0 && (ch & 2) == 0) {
+                    if (Math.abs(xDistance) > Math.abs(yDistance)) {
+                        ghostDirection = 3;
+                    } else {
+                        ghostDirection = 0;
+                    }
+                }
+                else if ((ch & 1) == 0) {
+                    ghostDirection = 3;
+                }
+                else if ((ch & 2) == 0) {
+                    ghostDirection = 0;
+                }
+                else ghostDirection = 2;
+            }
+            // Handles wall collisions
+            if ( (ghostDirection == 3 && (ch & 1) != 0) ||
+                    (ghostDirection == 1 && (ch & 4) != 0) ||
+                    (ghostDirection == 0 && (ch & 2) != 0) ||
+                    (ghostDirection == 2 && (ch & 8) != 0) ) {
+                ghostDirection = 4;
+            }
+        }
+
+        if (ghostDirection == 0) {
+            yPosGhost += -TILE_SIZE / 20;
+        } else if (ghostDirection == 1) {
+            xPosGhost += TILE_SIZE / 20;
+        } else if (ghostDirection == 2) {
+            yPosGhost += TILE_SIZE / 20;
+        } else if (ghostDirection == 3) {
+            xPosGhost += -TILE_SIZE / 20;
+        }
+
+        canvas.drawBitmap(ghostBitmap, xPosGhost, yPosGhost, paint);
     }
 
     private void updateFrame(long gameTime) {
@@ -223,8 +334,8 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
         floor = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
                 getResources(), R.drawable.floor), spriteSize, spriteSize, false);
 
-//        ghostBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
-//                getResources(), R.drawable.ghost), spriteSize, spriteSize, false);
+        ghostBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
+                getResources(), R.drawable.ghost), spriteSize, spriteSize, false);
     }
 
 
