@@ -36,6 +36,7 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
     private int yPosGhost;
 
 
+
     public DrawGame(Context context) {
         super(context);
         holder = getHolder();
@@ -71,6 +72,7 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
             if (canvas != null) {
                 drawMap(canvas);
                 drawPacMan(canvas);
+                drawPellets(canvas);
                 updateFrame(System.currentTimeMillis());
                 holder.unlockCanvasAndPost(canvas);
             }
@@ -115,9 +117,9 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
                     case 2:
                         Rect rect2 = new Rect(posX, posY, posX + TILE_SIZE, posY + TILE_SIZE);
                         canvas.drawBitmap(floor, null, rect2,null);
-                        //paint.setColor(Color.parseColor("#A3A3A3"));
-                        //paint.setStrokeWidth(8);
-                        //canvas.drawCircle(posX + TILE_SIZE / 2, posY + TILE_SIZE / 2, TILE_SIZE / 10, paint);
+                        paint.setColor(Color.parseColor("#A3A3A3"));
+                        paint.setStrokeWidth(8);
+                        canvas.drawCircle(posX + TILE_SIZE / 2, posY + TILE_SIZE / 2, TILE_SIZE / 10, paint);
                         break;
                     case 3:
                         Rect rect3 = new Rect(posX, posY, posX + TILE_SIZE, posY + TILE_SIZE);
@@ -144,8 +146,18 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
             default:
                 canvas.drawBitmap(pacManDown[currentPacManFrame],xPosPacman - TILE_SIZE, yPosPacman - TILE_SIZE, paint);
         }
+    }
+
+    public void drawPellets(Canvas canvas) {
+
+        for (int i = 0; i < 18; i++) {
+            for (int j = 0; j < 17; j++) {
+                posX = j * TILE_SIZE;
+                posY= i * TILE_SIZE;
 
 
+            }
+        }
     }
 
     @Override
