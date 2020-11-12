@@ -115,13 +115,16 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
                     case 2:
                         Rect rect2 = new Rect(posX, posY, posX + TILE_SIZE, posY + TILE_SIZE);
                         canvas.drawBitmap(floor, null, rect2,null);
+                        //paint.setColor(Color.parseColor("#A3A3A3"));
+                        //paint.setStrokeWidth(8);
+                        //canvas.drawCircle(posX + TILE_SIZE / 2, posY + TILE_SIZE / 2, TILE_SIZE / 10, paint);
                         break;
                     case 3:
                         Rect rect3 = new Rect(posX, posY, posX + TILE_SIZE, posY + TILE_SIZE);
                         canvas.drawBitmap(floor, null, rect3,null);
                         paint.setColor(Color.GRAY);
                         paint.setStrokeWidth(8);
-                        canvas.drawLine(posX, posY + 5, posX + TILE_SIZE, posY + 5,paint);
+                        canvas.drawLine(posX, posY + 5, posX + TILE_SIZE, posY + 5, paint);
                 }
             }
         }
@@ -133,13 +136,13 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
                 canvas.drawBitmap(pacManUp[currentPacManFrame],xPosPacman - TILE_SIZE, yPosPacman - TILE_SIZE, paint);
                 break;
             case 1:
-                canvas.drawBitmap(pacManLeft[currentPacManFrame],xPosPacman - TILE_SIZE, yPosPacman - TILE_SIZE,paint);
+                canvas.drawBitmap(pacManLeft[currentPacManFrame],xPosPacman - TILE_SIZE, yPosPacman - TILE_SIZE, paint);
                 break;
             case 2:
-                canvas.drawBitmap(pacManRight[currentPacManFrame],xPosPacman - TILE_SIZE, yPosPacman - TILE_SIZE,paint);
+                canvas.drawBitmap(pacManRight[currentPacManFrame],xPosPacman - TILE_SIZE, yPosPacman - TILE_SIZE, paint);
                 break;
             default:
-                canvas.drawBitmap(pacManDown[currentPacManFrame],xPosPacman - TILE_SIZE, yPosPacman - TILE_SIZE,paint);
+                canvas.drawBitmap(pacManDown[currentPacManFrame],xPosPacman - TILE_SIZE, yPosPacman - TILE_SIZE, paint);
         }
 
 
@@ -219,20 +222,20 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 1, 1, 3, 1, 1, 2, 2, 2, 2, 2, 1},
-                {2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2},
-                {1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+                {1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1},
+                {1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1},
+                {1, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 1, 2, 1},
+                {1, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1},
+                {1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1},
+                {1, 1, 1, 1, 2, 2, 2, 1, 3, 1, 2, 2, 2, 1, 1, 1, 1},
+                {2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2},
+                {1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1},
+                {1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1},
+                {1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1},
+                {1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1},
+                {1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1},
+                {1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1},
+                {1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
         };
         rows = tileMap.length;
