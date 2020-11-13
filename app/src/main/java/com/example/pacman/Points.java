@@ -1,6 +1,14 @@
 package com.example.pacman;
 
-public class Points extends Tile{
+public class Points {
+
+    private int highScore;
+    private int score;
+
+    public Points(int highScore, int score) {
+        this.highScore = highScore;
+        this.score = score;
+    }
 
     public int getHighScore() {
         return highScore;
@@ -18,11 +26,4 @@ public class Points extends Tile{
         this.score = score;
     }
 
-    private int highScore;
-    private int score;
-
-    public Points(int highScore, int score) {
-        this.highScore = highScore;
-        this.score = score;
-    }
 }
