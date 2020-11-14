@@ -14,7 +14,6 @@ import android.view.SurfaceView;
 public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private Context context;
     private GameThread thread = null;
-    private SurfaceHolder holder;
     private int screenWidth;
     private final int TILE_SIZE;
     private int[][] tileMap;
@@ -23,12 +22,12 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private int totalFrame = 4;
     private Bitmap[] pacManUp, pacManRight, pacManDown, pacManLeft;
     private Bitmap walls, floor;
-    private Bitmap ghostBitmap;
     private Paint paint;
     private int currentPacManFrame = 0;
     private int currentScore = 0;
     private Points points;
-    private Tile tile, ghost, pacman, pellets;
+    private Tile tile, pacman, pellets;
+    private Ghost ghost;
 
 
     public DrawGame(Context context, int screenWidth) {
@@ -44,10 +43,10 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
         TILE_SIZE = screenWidth / 17;
 
-        tile = new Tile(TILE_SIZE);
-        ghost = new Tile(TILE_SIZE);
-        pacman = new Tile(TILE_SIZE);
-        pellets = new Tile(TILE_SIZE);
+        tile = new Tile(TILE_SIZE, context);
+        ghost = new Ghost(TILE_SIZE, context);
+        pacman = new Tile(TILE_SIZE, context);
+        pellets = new Tile(TILE_SIZE, context);
 
         loadBitmapImages();
 
@@ -97,18 +96,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
         drawPacMan(canvas);
 
-        drawGhost(canvas);
+        ghost.draw(canvas, tileMap);
         updateScores(canvas);
-    }
-
-    public void drawGhost(Canvas canvas) {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++){
-                if (tileMap[i][j] == 4) {
-                    canvas.drawBitmap(ghostBitmap, null, ghost.getRect(), null);
-                }
-            }
-        }
     }
 
     public void updateScores(Canvas canvas){
@@ -268,9 +257,6 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                 getResources(), R.drawable.wall), spriteSize, spriteSize, false);
         floor = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
                 getResources(), R.drawable.floor), spriteSize, spriteSize, false);
-
-        ghostBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
-                getResources(), R.drawable.ghost), spriteSize, spriteSize, false);
     }
 
 

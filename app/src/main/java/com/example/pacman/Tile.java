@@ -1,13 +1,16 @@
 package com.example.pacman;
 
 
+import android.content.Context;
 import android.graphics.Rect;
 
 public class Tile {
 
+    private Context context;
     private int x, y, TILE_SIZE;
 
-    public Tile(int tileSize) {
+    public Tile(int tileSize, Context context) {
+        this.context = context;
         this.TILE_SIZE = tileSize;
     }
 
