@@ -6,14 +6,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 
-public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Callback {
+public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
+    private Context context;
+    private GameThread thread = null;
     private SurfaceHolder holder;
+    private int screenWidth;
     private final int TILE_SIZE;
     private int[][] tileMap;
     private int rows, cols;
@@ -24,23 +26,21 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
     private Bitmap ghostBitmap;
     private Paint paint;
     private int currentPacManFrame = 0;
-    private int currentScore = 20;
+    private int currentScore = 0;
     private Points points;
     private Tile tile, ghost, pacman, pellets;
 
 
-    public DrawGame(Context context) {
+    public DrawGame(Context context, int screenWidth) {
         super(context);
-        holder = getHolder();
-        Thread thread = new Thread(this);
-        thread.start();
+        this.context = context;
+        getHolder().addCallback(this);
+
         frameTicker = 1000 / totalFrame;
         points = new Points(0,0);
         createTileMap();
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((GameActivity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int screenWidth = displayMetrics.widthPixels;
+        this.screenWidth = screenWidth;
 
         TILE_SIZE = screenWidth / 17;
 
@@ -67,28 +67,38 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
 
     }
 
-    @Override
-    public void run() {
-        boolean canDraw = true;
-        while (canDraw) {
-            if (!holder.getSurface().isValid()) {
-                continue;
-            }
-            Canvas canvas = holder.lockCanvas();
-            if (canvas != null) {
-                drawMap(canvas);
+    public void startGame() {
+        if (thread == null) {
+            thread = new GameThread(this);
+            thread.startThread();
+        }
+    }
 
-                updateFrame(System.currentTimeMillis());
-
-                drawPellets(canvas);
-
-                drawPacMan(canvas);
-
-                drawGhost(canvas);
-                updateScores(canvas);
-                holder.unlockCanvasAndPost(canvas);
+    public void stopGame() {
+        if (thread != null) {
+            thread.stopThread();
+            boolean retry = true;
+            while (retry) {
+                try {
+                    thread.join();
+                    retry = false;
+                } catch (InterruptedException e) {}
+                thread = null;
             }
         }
+    }
+
+    public void onDraw(Canvas canvas) {
+        drawMap(canvas);
+
+        updateFrame(System.currentTimeMillis());
+
+        drawPellets(canvas);
+
+        drawPacMan(canvas);
+
+        drawGhost(canvas);
+        updateScores(canvas);
     }
 
     public void drawGhost(Canvas canvas) {
@@ -109,11 +119,11 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
         }
 
         String formattedHighScore = String.format("%05d", points.getHighScore());
-        String hScore = "High Score :" + formattedHighScore;
+        String hScore = "High Score: " + formattedHighScore;
         canvas.drawText(hScore, 0, (float) (TILE_SIZE * 1.8), paint);
 
         String formattedScore = String.format("%05d", points.getScore());
-        String score = "Score :" + formattedScore;
+        String score = "Score: " + formattedScore;
         canvas.drawText(score, (float) (TILE_SIZE * 11.6), (float) (TILE_SIZE * 1.8), paint);
 
     }
@@ -132,7 +142,6 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
     }
 
     public void drawMap(Canvas canvas) {
-        super.draw(canvas);
 
         paint = new Paint();
 
@@ -199,17 +208,17 @@ public class DrawGame extends SurfaceView implements Runnable, SurfaceHolder.Cal
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d("TEST", "Surface Created");
+        startGame();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.d("TEST", "Surface Changed");
+
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d("TEST", "Surface Destroyed");
+        stopGame();
     }
 
     private void loadBitmapImages(){

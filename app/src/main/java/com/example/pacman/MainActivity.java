@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,8 +16,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        hideSystemUI();
+
 
         if (sharedPref != null) {
             if (sharedPref.loadMusicState()) {
@@ -42,48 +44,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
-    /*
-    // Shows the system bars by removing all the flags
-    // except for the ones that make the content appear under the system bars.
-    private void showSystemUI() {
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }*/
-
-
     public void startSettingsActivity(View view) {
         Intent settings = new Intent(this, Settings.class);
         startActivity(settings);
+        overridePendingTransition(0, 0);
     }
 
     public void startActivityAbout(View view) {
         Intent startActivityAbout = new Intent(this, About.class);
         startActivity(startActivityAbout);
-
+        overridePendingTransition(0, 0);
     }
 
     public void startHelp(View view) {
         Intent startActivityHelp = new Intent(this, HelpActivity.class);
         startActivity(startActivityHelp);
+        overridePendingTransition(0, 0);
 
     }
 

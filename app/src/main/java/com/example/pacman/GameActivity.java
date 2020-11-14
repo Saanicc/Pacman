@@ -1,20 +1,30 @@
 package com.example.pacman;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 public class GameActivity extends Activity {
-    private DrawGame drawGame;
+    private DrawGame canvas;
     private SharedPref sharedPref;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
         super.onCreate(savedInstanceState);
-        hideSystemUI();
-        drawGame = new DrawGame(this);
-        setContentView(drawGame);
+//        hideSystemUI();
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+
+        Log.d("TEST", "X: " + point.x);
+        canvas = new DrawGame(this, point.x);
+        setContentView(canvas);
         loadMusic();
     }
     private void hideSystemUI() {
