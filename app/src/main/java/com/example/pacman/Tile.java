@@ -7,7 +7,9 @@ import android.graphics.Rect;
 public class Tile {
 
     private Context context;
-    private int x, y, TILE_SIZE;
+    private int x;
+    private int y;
+    private int TILE_SIZE;
 
     public Tile(int tileSize, Context context) {
         this.context = context;
@@ -20,6 +22,14 @@ public class Tile {
 
     public int getY() {
         return y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     public void setTilePosition(int x, int y) {

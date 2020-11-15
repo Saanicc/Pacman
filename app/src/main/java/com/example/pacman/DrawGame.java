@@ -6,9 +6,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.Log;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 
 public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
@@ -18,7 +23,6 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private final int TILE_SIZE;
     private int[][] tileMap;
     private int rows, cols;
-    private long frameTicker;
     private int totalFrame = 4;
     private Bitmap[] pacManUp, pacManRight, pacManDown, pacManLeft;
     private Bitmap walls, floor;
@@ -30,25 +34,30 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private Ghost ghost;
 
 
-    public DrawGame(Context context, int screenWidth) {
+    public DrawGame(Context context) {
         super(context);
         this.context = context;
         getHolder().addCallback(this);
 
-        frameTicker = 1000 / totalFrame;
         points = new Points(0,0);
+        paint = new Paint();
         createTileMap();
 
-        this.screenWidth = screenWidth;
+        WindowManager wm = (WindowManager) this.getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point screenSize = new Point();
+        display.getSize(screenSize);
+
+        screenWidth = screenSize.x;
 
         TILE_SIZE = screenWidth / 17;
+
+        loadBitmapImages();
 
         tile = new Tile(TILE_SIZE, context);
         ghost = new Ghost(TILE_SIZE, context);
         pacman = new Tile(TILE_SIZE, context);
         pellets = new Tile(TILE_SIZE, context);
-
-        loadBitmapImages();
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++){
@@ -81,16 +90,25 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                 try {
                     thread.join();
                     retry = false;
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e) {e.printStackTrace();}
                 thread = null;
             }
         }
     }
 
-    public void onDraw(Canvas canvas) {
-        drawMap(canvas);
+    public void update() {
+        ghost.move();
 
-        updateFrame(System.currentTimeMillis());
+        currentPacManFrame++;
+        if (currentPacManFrame >= 4) {
+            currentPacManFrame = 0;
+        }
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+        drawMap(canvas);
 
         drawPellets(canvas);
 
@@ -117,22 +135,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-    private void updateFrame(long gameTime) {
-
-        if (gameTime > frameTicker + (totalFrame * 30)) {
-            frameTicker = gameTime;
-
-            currentPacManFrame++;
-            if (currentPacManFrame >= totalFrame) {
-                currentPacManFrame = 0;
-            }
-
-        }
-    }
-
     public void drawMap(Canvas canvas) {
-
-        paint = new Paint();
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -198,6 +201,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         startGame();
+
+
     }
 
     @Override
@@ -259,7 +264,6 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                 getResources(), R.drawable.floor), spriteSize, spriteSize, false);
     }
 
-
     public void createTileMap() {
         tileMap = new int[][] {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -285,6 +289,5 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         rows = tileMap.length;
         cols = tileMap[1].length;
     }
-
 
 }
