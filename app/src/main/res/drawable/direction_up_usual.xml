@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+		android:width="50dp"
+		android:height="50dp"
+		android:viewportHeight="30"
+		android:viewportWidth="30">
+
+	<path
+		android:pathData="@string/vectorpath_direction_up"
+		android:strokeColor="@color/controller_default"
+		android:strokeWidth="2"/>
+</vector>

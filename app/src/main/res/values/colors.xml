@@ -6,4 +6,5 @@
 
     <color name="buttonNotPressed">#FCDA5F</color>
     <color name="buttonPressed">#B19221</color>
+    <color name="controller_default">#FFF</color>
 </resources>
