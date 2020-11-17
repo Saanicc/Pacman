@@ -3,47 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".GameActivity">
 
     <com.example.pacman.DrawGame
         android:id="@+id/drawGame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-
     <Button
         android:id="@+id/down"
         android:layout_width="80dp"
         android:layout_height="70dp"
-        android:background="@drawable/dpaddown"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/dpaddown"
+        android:onClick="dPadDown" />
+
     <Button
         android:id="@+id/up"
         android:layout_width="80dp"
         android:layout_height="70dp"
-        android:background="@drawable/dpadup"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="165dp"/>
+        android:layout_marginBottom="165dp"
+        android:background="@drawable/dpadup"
+        android:onClick="dPadUp" />
+
     <Button
         android:id="@+id/left"
         android:layout_width="80dp"
         android:layout_height="70dp"
-        android:background="@drawable/dpadleft"
-        android:layout_marginStart="100dp"
         android:layout_above="@+id/down"
-        />
+        android:layout_marginStart="100dp"
+        android:background="@drawable/dpadleft"
+        android:onClick="dPadLeft" />
+
     <Button
         android:id="@+id/right"
         android:layout_width="80dp"
         android:layout_height="70dp"
-        android:background="@drawable/dpadright"
-        android:layout_marginEnd="100dp"
-        android:layout_alignParentEnd="true"
         android:layout_above="@+id/down"
-        />
-
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/dpadright"
+        android:onClick="dPadRight" />
 
 </RelativeLayout>

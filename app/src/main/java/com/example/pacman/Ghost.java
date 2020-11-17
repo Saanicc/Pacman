@@ -10,7 +10,6 @@ public class Ghost extends Tile {
 
     private final Bitmap ghostBitmap;
     private Context context;
-    private int x, y, xMax, yMax, speed;
 
     public Ghost(int tileSize, Context context) {
         super(tileSize, context);
@@ -22,22 +21,10 @@ public class Ghost extends Tile {
         for (int i = 0; i < mapArray.length; i++) {
             for (int j = 0; j < mapArray[1].length; j++){
                 if (mapArray[i][j] == 4) {
-                    canvas.drawBitmap(ghostBitmap, null, getRect(), null);
+                    canvas.drawBitmap(ghostBitmap, null, getBounds(), null);
                 }
             }
         }
-        speed = 8;
-        xMax = 17 * getTILE_SIZE();
-        x = getX() + getTILE_SIZE() / speed;
-
-        if (getX() + getTILE_SIZE() > xMax) {
-            Log.d("TEST", "I If-satsen");
-            x -= x - speed * 2;
-        }
-    }
-
-    public void move() {
-        setTilePosition(x, getY());
     }
 
 }

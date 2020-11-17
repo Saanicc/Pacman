@@ -70,7 +70,6 @@ public class GameThread extends Thread {
                 float averageFPS = 1000 / ((totalTime / frameCount) / 1000000);
                 frameCount = 0;
                 totalTime = 0;
-                Log.d("TEST", "AverageFPS: " + averageFPS);
             }
         }
     }
