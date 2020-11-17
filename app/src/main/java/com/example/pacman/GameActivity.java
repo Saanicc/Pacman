@@ -1,13 +1,11 @@
 package com.example.pacman;
 
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 
 public class GameActivity extends Activity {
-    private DrawGame canvas;
+    private DrawGame drawGame;
     private SharedPref sharedPref;
 
     @Override
@@ -17,8 +15,9 @@ public class GameActivity extends Activity {
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        canvas = new DrawGame(this);
-        setContentView(canvas);
+
+        setContentView(R.layout.game_view);
+        drawGame = (DrawGame) findViewById(R.id.drawGame);
         loadMusic();
     }
 

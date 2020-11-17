@@ -7,12 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 
 
@@ -34,8 +33,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private Ghost ghost;
 
 
-    public DrawGame(Context context) {
-        super(context);
+    public DrawGame(Context context, AttributeSet attrs) {
+        super(context, attrs);
         this.context = context;
         getHolder().addCallback(this);
 
@@ -74,6 +73,12 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         Log.d("TEST", "Tile size: " + tile.getTILE_SIZE());
 
     }
+
+//    public DrawGame(Context context, AttributeSet attrs, int tile_size){
+//        super(context, attrs);
+//
+//        TILE_SIZE = tile_size;
+//    }
 
     public void startGame() {
         if (thread == null) {
