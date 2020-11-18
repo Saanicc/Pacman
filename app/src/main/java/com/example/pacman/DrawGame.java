@@ -1,4 +1,4 @@
-package com.example.pacman;
+ package com.example.pacman;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -17,8 +18,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import java.util.ArrayList;
 
-public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
+
+ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private Context context;
     private GameThread thread = null;
     private int screenWidth;
@@ -32,11 +35,14 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private int currentPacManFrame = 0;
     private int currentScore = 0;
     private Points points;
-    private Tile blank, floor, wall, pellets;
+    private Tile blank, floor, pellets;
+    private Wall wall;
     private Ghost ghost;
     private Pacman pacman;
     private Button up, left, right, down;
-    private boolean moveUp = false, moveLeft = false, moveRight = true, moveDown = false;
+    private boolean moveUp = false, moveLeft = false, moveRight = true, moveDown = false, isColliding = false;
+    private int viewDirection = 2;
+    private ArrayList<Tile> walls;
 
 
     public DrawGame(Context context, AttributeSet attrs) {
@@ -67,10 +73,11 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
         blank = new Tile(TILE_SIZE, context);
         floor = new Tile(TILE_SIZE, context);
-        wall = new Tile(TILE_SIZE, context);
         ghost = new Ghost(TILE_SIZE, context);
         pacman = new Pacman(TILE_SIZE, context);
         pellets = new Tile(TILE_SIZE, context);
+
+        walls = new ArrayList<>();
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++){
@@ -80,7 +87,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
-        pacman.setTilePosition(9 * TILE_SIZE, 13 * TILE_SIZE);
+        pacman.setTilePosition(8 * TILE_SIZE, 12 * TILE_SIZE);
 
         points.setHighScore(0);
 
@@ -108,36 +115,42 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void dPadLeft(){
+        if (viewDirection == 1) return;
         moveLeft = true;
         moveDown = false;
         moveRight = false;
         moveUp = false;
+        isColliding = false;
     }
 
     public void dPadUp(){
+        if (viewDirection == 0) return;
         moveLeft = false;
         moveDown = false;
         moveRight = false;
         moveUp = true;
+        isColliding = false;
     }
 
     public void dPadRight(){
+        if (viewDirection == 2) return;
         moveLeft = false;
         moveDown = false;
         moveRight = true;
         moveUp = false;
+        isColliding = false;
     }
 
     public void dPadDown(){
+        if (viewDirection == 3) return;
         moveLeft = false;
         moveDown = true;
         moveRight = false;
         moveUp = false;
+        isColliding = false;
     }
 
     public void update() {
-
-        checkCollision();
 
         currentPacManFrame++;
         if (currentPacManFrame >= 4) {
@@ -151,16 +164,15 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         drawMap(canvas);
 
+        checkCollision();
+
         drawPellets(canvas);
-
-
 
         drawPacMan(canvas);
 
         ghost.draw(canvas, tileMap);
 
         updateScores(canvas);
-
 
     }
 
@@ -178,7 +190,6 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         String formattedScore = String.format("%05d", points.getScore());
         String score = "Score: " + formattedScore;
         canvas.drawText(score, (float) (TILE_SIZE * 11.6), (float) (TILE_SIZE * 1.8), paint);
-
     }
 
     public void drawMap(Canvas canvas) {
@@ -193,8 +204,11 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                         canvas.drawRect(blank.getX(), blank.getY(), blank.getX() + blank.getTILE_SIZE(), blank.getY() + blank.getTILE_SIZE(), paint);
                         break;
                     case 1:
+                        wall = new Wall(TILE_SIZE, context);
                         wall.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
+                        walls.add(wall);
                         canvas.drawBitmap(wallBitmap, null, wall.getBounds(),null);
+
                         break;
                     case 2:
                     case 4:
@@ -214,52 +228,90 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void checkCollision() {
-        if (pacman.getBounds().intersect(blank.getBounds())) {
-            Log.d("TEST", "KROCK!!!!!!!");
+        for (Tile woW: walls) {
+            Rect player = pacman.getBounds();
+            Rect wall = woW.getBounds();
+            if (Rect.intersects(wall, player)) {
+                isColliding = true;
+                switch (viewDirection) {
+                    case 0:
+                        pacman.setTilePosition(pacman.getX(), wall.bottom);
+                        break;
+                    case 1:
+                        pacman.setTilePosition(wall.left + pacman.getTILE_SIZE(), pacman.getY());
+                        break;
+                    case 2:
+                        pacman.setTilePosition(wall.left - pacman.getTILE_SIZE(), pacman.getY());
+                        break;
+                    case 3:
+                        pacman.setTilePosition(pacman.getX(), wall.top - pacman.getTILE_SIZE());
+
+
+
+//                        float x = pacman.getX();
+//                        float y = pacman.getY();
+//                        int indeX = (int) x / pacman.getTILE_SIZE();
+//                        int indexY = (int) y / pacman.getTILE_SIZE();
+//                        Log.d("TEST", "X " + indeX + ", Y " + indexY);
+                }
+            } else isColliding = false;
         }
+
     }
 
     public void drawPacMan(Canvas canvas){
 
-        int viewDirection = 2;
-
-        if (moveUp) {
-            viewDirection = 0;
-            pacman.moveUp(5);
-        } else if (moveRight) {
-            viewDirection = 2;
-            pacman.moveRight(5);
-        } else if (moveLeft) {
-            viewDirection = 1;
-            pacman.moveLeft(5);
-        } else if (moveDown) {
-            viewDirection = 3;
-            pacman.moveDown(5);
+        if (!isColliding) {
+            if (moveUp) {
+                viewDirection = 0;
+                pacman.moveUp(5);
+            } else if (moveRight) {
+                viewDirection = 2;
+                pacman.moveRight(5);
+            } else if (moveLeft) {
+                viewDirection = 1;
+                pacman.moveLeft(5);
+            } else if (moveDown) {
+                viewDirection = 3;
+                pacman.moveDown(5);
+            }
         }
 
         switch (viewDirection){
             case 0:
-                canvas.drawBitmap(pacManUp[currentPacManFrame],pacman.getX() - pacman.getTILE_SIZE(), pacman.getY() - pacman.getTILE_SIZE(), paint);
+                canvas.drawBitmap(pacManUp[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 11.5), paint);
+//                paint.setColor(Color.RED);
+//                paint.setAlpha(125);
+//                canvas.drawRect(pacman.getBounds(), paint);
                 break;
             case 1:
-                canvas.drawBitmap(pacManLeft[currentPacManFrame],pacman.getX() - pacman.getTILE_SIZE(), pacman.getY() - pacman.getTILE_SIZE(), paint);
+                canvas.drawBitmap(pacManLeft[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 7.5), paint);
+//                paint.setColor(Color.RED);
+//                paint.setAlpha(125);
+//                canvas.drawRect(pacman.getBounds(), paint);
                 break;
             case 2:
-                canvas.drawBitmap(pacManRight[currentPacManFrame],pacman.getX() - pacman.getTILE_SIZE(), pacman.getY() - pacman.getTILE_SIZE(), paint);
+                canvas.drawBitmap(pacManRight[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 7.5), paint);
+//                paint.setColor(Color.RED);
+//                paint.setAlpha(125);
+//                canvas.drawRect(pacman.getBounds(), paint);
                 break;
             default:
-                canvas.drawBitmap(pacManDown[currentPacManFrame],pacman.getX() - pacman.getTILE_SIZE(), pacman.getY() - pacman.getTILE_SIZE(), paint);
+                canvas.drawBitmap(pacManDown[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 2.5), paint);
+//                paint.setColor(Color.RED);
+//                paint.setAlpha(125);
+//                canvas.drawRect(pacman.getBounds(), paint);
         }
     }
 
     public void drawPellets(Canvas canvas) {
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < cols; x++) {
 
-                pellets.setTilePosition(j * TILE_SIZE, i * TILE_SIZE);
+                pellets.setTilePosition(x * TILE_SIZE, y * TILE_SIZE);
 
-                if (tileMap[i][j] == 2) {
+                if (tileMap[y][x] == 2) {
                     paint.setColor(Color.parseColor("#A3A3A3"));
                     paint.setStrokeWidth(8);
                     canvas.drawCircle(pellets.getX() + pellets.getTILE_SIZE() / 2, pellets.getY() + pellets.getTILE_SIZE() / 2, pellets.getTILE_SIZE() / 10, paint);
@@ -286,7 +338,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void loadBitmapImages(){
-        int spriteSize = TILE_SIZE;
+        int spriteSize = TILE_SIZE - 15;
 
         pacManRight = new Bitmap[totalFrame];
         pacManRight[0] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(

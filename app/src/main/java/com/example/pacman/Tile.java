@@ -10,7 +10,6 @@ public class Tile {
     private int x;
     private int y;
     private int TILE_SIZE;
-    private Rect bounds;
 
     public Tile(int tileSize, Context context) {
         this.context = context;
@@ -51,8 +50,8 @@ public class Tile {
     }
 
     public Rect getBounds() {
-        bounds = new Rect(x, y, x + TILE_SIZE, y + TILE_SIZE);
-        return bounds;
+        Rect rect = new Rect(x, y, x + TILE_SIZE, y + TILE_SIZE);
+        return rect;
     }
 
 }
