@@ -39,7 +39,6 @@ import java.util.ArrayList;
     private Wall wall;
     private Ghost ghost;
     private Pacman pacman;
-    private Button up, left, right, down;
     private boolean moveUp = false, moveLeft = false, moveRight = true, moveDown = false, isColliding = false;
     private int viewDirection = 2;
     private ArrayList<Tile> walls;
@@ -52,11 +51,6 @@ import java.util.ArrayList;
 
         points = new Points(0,0);
         paint = new Paint();
-
-        left = findViewById(R.id.left);
-        up = findViewById(R.id.up);
-        right = findViewById(R.id.right);
-        down = findViewById(R.id.down);
 
         createTileMap();
 
@@ -147,7 +141,6 @@ import java.util.ArrayList;
         moveDown = true;
         moveRight = false;
         moveUp = false;
-        isColliding = false;
     }
 
     public void update() {
@@ -228,9 +221,9 @@ import java.util.ArrayList;
     }
 
     public void checkCollision() {
-        for (Tile woW: walls) {
+        for (Tile tile: walls) {
             Rect player = pacman.getBounds();
-            Rect wall = woW.getBounds();
+            Rect wall = tile.getBounds();
             if (Rect.intersects(wall, player)) {
                 isColliding = true;
                 switch (viewDirection) {
@@ -245,35 +238,41 @@ import java.util.ArrayList;
                         break;
                     case 3:
                         pacman.setTilePosition(pacman.getX(), wall.top - pacman.getTILE_SIZE());
-
-
-
-//                        float x = pacman.getX();
-//                        float y = pacman.getY();
-//                        int indeX = (int) x / pacman.getTILE_SIZE();
-//                        int indexY = (int) y / pacman.getTILE_SIZE();
-//                        Log.d("TEST", "X " + indeX + ", Y " + indexY);
                 }
             } else isColliding = false;
         }
 
     }
 
-    public void drawPacMan(Canvas canvas){
+    public void drawPacMan(Canvas canvas) {
+
+//        float x = pacman.getX();
+//        float y = pacman.getY();
+//        int indexX = (int) x / pacman.getTILE_SIZE();
+//        int indexY = (int) y / pacman.getTILE_SIZE();
+
+//        int levelPos = tileMap[indexY][indexX];
+
 
         if (!isColliding) {
             if (moveUp) {
                 viewDirection = 0;
-                pacman.moveUp(5);
+                pacman.moveUp(4);
             } else if (moveRight) {
                 viewDirection = 2;
-                pacman.moveRight(5);
+                pacman.moveRight(4);
+                if (pacman.getX() > screenWidth) {
+                    pacman.setTilePosition(-pacman.getTILE_SIZE(), pacman.getY());
+                }
             } else if (moveLeft) {
                 viewDirection = 1;
-                pacman.moveLeft(5);
+                pacman.moveLeft(4);
+                if (pacman.getX() < -pacman.getTILE_SIZE()) {
+                    pacman.setTilePosition(screenWidth, pacman.getY());
+                }
             } else if (moveDown) {
                 viewDirection = 3;
-                pacman.moveDown(5);
+                pacman.moveDown(4);
             }
         }
 
@@ -323,13 +322,10 @@ import java.util.ArrayList;
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         startGame();
-
-
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
     @Override
@@ -381,9 +377,9 @@ import java.util.ArrayList;
                 getResources(), R.drawable.pacman_up), spriteSize, spriteSize, false);
 
         wallBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
-                getResources(), R.drawable.wall), spriteSize, spriteSize, false);
+                getResources(), R.drawable.wall), TILE_SIZE, TILE_SIZE, false);
         floorBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
-                getResources(), R.drawable.floor), spriteSize, spriteSize, false);
+                getResources(), R.drawable.floor), TILE_SIZE, TILE_SIZE, false);
     }
 
     public void createTileMap() {
