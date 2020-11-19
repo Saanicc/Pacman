@@ -141,32 +141,25 @@ import java.util.ArrayList;
         moveDown = true;
         moveRight = false;
         moveUp = false;
+        isColliding = false;
     }
 
     public void update() {
-
         currentPacManFrame++;
         if (currentPacManFrame >= 4) {
             currentPacManFrame = 0;
         }
-
     }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         drawMap(canvas);
-
         checkCollision();
-
         drawPellets(canvas);
-
         drawPacMan(canvas);
-
         ghost.draw(canvas, tileMap);
-
         updateScores(canvas);
-
     }
 
     public void updateScores(Canvas canvas){
@@ -220,12 +213,58 @@ import java.util.ArrayList;
         }
     }
 
+     public boolean pathUp() {
+         for (Tile tile : walls) {
+             if (pacman.getY() - pacman.getTILE_SIZE() == tile.getY()) {
+                 if (pacman.getX() < tile.getX() + tile.getTILE_SIZE() && pacman.getX() + pacman.getTILE_SIZE() > tile.getX()) {
+                     return false;
+                 }
+             }
+         }
+         return true;
+     }
+
+     public boolean pathDown() {
+         for (Tile tile : walls) {
+             if (pacman.getY() + pacman.getTILE_SIZE() == tile.getY()) {
+                 if (pacman.getX() < tile.getX() + tile.getTILE_SIZE() && pacman.getX() + pacman.getTILE_SIZE() > tile.getX()) {
+                     return false;
+                 }
+             }
+         }
+         return true;
+     }
+
+     public boolean pathLeft() {
+         for (Tile tile : walls) {
+             if (pacman.getX() - pacman.getTILE_SIZE() == tile.getX()) {
+                 if (pacman.getY() < tile.getY() + tile.getTILE_SIZE() && pacman.getY() + pacman.getTILE_SIZE() > tile.getY()) {
+                     return false;
+                 }
+             }
+         }
+         return true;
+     }
+
+     public boolean pathRight() {
+         for (Tile tile : walls) {
+             if (pacman.getX() + pacman.getTILE_SIZE() == tile.getX()) {
+                 if (pacman.getY() < tile.getY() + tile.getTILE_SIZE() && pacman.getY() + pacman.getTILE_SIZE() > tile.getY()) {
+                     return false;
+                 }
+             }
+         }
+         return true;
+     }
+
     public void checkCollision() {
         for (Tile tile: walls) {
             Rect player = pacman.getBounds();
             Rect wall = tile.getBounds();
             if (Rect.intersects(wall, player)) {
                 isColliding = true;
+            }
+            if (isColliding) {
                 switch (viewDirection) {
                     case 0:
                         pacman.setTilePosition(pacman.getX(), wall.bottom);
@@ -238,10 +277,11 @@ import java.util.ArrayList;
                         break;
                     case 3:
                         pacman.setTilePosition(pacman.getX(), wall.top - pacman.getTILE_SIZE());
+                        break;
                 }
-            } else isColliding = false;
+                isColliding = false;
+            }
         }
-
     }
 
     public void drawPacMan(Canvas canvas) {
@@ -255,51 +295,39 @@ import java.util.ArrayList;
 
 
         if (!isColliding) {
-            if (moveUp) {
+            if (moveUp && pathUp()) {
                 viewDirection = 0;
-                pacman.moveUp(4);
-            } else if (moveRight) {
+            } else if (moveRight && pathRight()) {
                 viewDirection = 2;
-                pacman.moveRight(4);
                 if (pacman.getX() > screenWidth) {
                     pacman.setTilePosition(-pacman.getTILE_SIZE(), pacman.getY());
                 }
-            } else if (moveLeft) {
+            } else if (moveLeft && pathLeft()) {
                 viewDirection = 1;
-                pacman.moveLeft(4);
                 if (pacman.getX() < -pacman.getTILE_SIZE()) {
                     pacman.setTilePosition(screenWidth, pacman.getY());
                 }
-            } else if (moveDown) {
+            } else if (moveDown && pathDown()) {
                 viewDirection = 3;
-                pacman.moveDown(4);
             }
         }
 
         switch (viewDirection){
             case 0:
+                pacman.moveUp(4);
                 canvas.drawBitmap(pacManUp[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 11.5), paint);
-//                paint.setColor(Color.RED);
-//                paint.setAlpha(125);
-//                canvas.drawRect(pacman.getBounds(), paint);
                 break;
             case 1:
+                pacman.moveLeft(4);
                 canvas.drawBitmap(pacManLeft[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 7.5), paint);
-//                paint.setColor(Color.RED);
-//                paint.setAlpha(125);
-//                canvas.drawRect(pacman.getBounds(), paint);
                 break;
             case 2:
+                pacman.moveRight(4);
                 canvas.drawBitmap(pacManRight[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 7.5), paint);
-//                paint.setColor(Color.RED);
-//                paint.setAlpha(125);
-//                canvas.drawRect(pacman.getBounds(), paint);
                 break;
             default:
+                pacman.moveDown(4);
                 canvas.drawBitmap(pacManDown[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 2.5), paint);
-//                paint.setColor(Color.RED);
-//                paint.setAlpha(125);
-//                canvas.drawRect(pacman.getBounds(), paint);
         }
     }
 
