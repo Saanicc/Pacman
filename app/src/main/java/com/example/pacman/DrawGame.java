@@ -1,24 +1,23 @@
  package com.example.pacman;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Display;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
+ import android.content.Context;
+ import android.content.Intent;
+ import android.graphics.Bitmap;
+ import android.graphics.BitmapFactory;
+ import android.graphics.Canvas;
+ import android.graphics.Color;
+ import android.graphics.Paint;
+ import android.graphics.Point;
+ import android.graphics.Rect;
+ import android.os.Handler;
+ import android.util.AttributeSet;
+ import android.view.Display;
+ import android.view.MotionEvent;
+ import android.view.SurfaceHolder;
+ import android.view.SurfaceView;
+ import android.view.WindowManager;
 
-import java.util.ArrayList;
+ import java.util.ArrayList;
 
 
  public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
@@ -42,6 +41,8 @@ import java.util.ArrayList;
     private boolean moveUp = false, moveLeft = false, moveRight = true, moveDown = false, isColliding = false;
     private int viewDirection = 2;
     private ArrayList<Tile> walls;
+    public static int LONG_PRESS_TIME=750;
+    final Handler handler = new Handler();
 
 
     public DrawGame(Context context, AttributeSet attrs) {
@@ -359,6 +360,29 @@ import java.util.ArrayList;
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         stopGame();
+    }
+
+    Runnable longPressed = new Runnable() {
+     public void run() {
+         Intent pauseIntent = new Intent(getContext(), PauseActivity.class);
+         getContext().startActivity(pauseIntent);
+     }
+    };
+
+    // Method to get touch events
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+     switch (event.getAction()) {
+         case (MotionEvent.ACTION_DOWN): {
+             handler.postDelayed(longPressed, LONG_PRESS_TIME);
+             break;
+         }
+         case (MotionEvent.ACTION_UP): {
+             handler.removeCallbacks(longPressed);
+             break;
+         }
+     }
+     return true;
     }
 
     private void loadBitmapImages(){
