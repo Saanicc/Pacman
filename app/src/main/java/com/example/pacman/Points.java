@@ -5,9 +5,8 @@ public class Points {
     private int highScore;
     private int score;
 
-    public Points(int highScore, int score) {
-        this.highScore = highScore;
-        this.score = score;
+    public Points() {
+
     }
 
     public int getHighScore() {
@@ -22,8 +21,8 @@ public class Points {
         return score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void isEaten() {
+        this.score += 20;
     }
 
 }

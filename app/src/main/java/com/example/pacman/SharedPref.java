@@ -22,4 +22,15 @@ public class SharedPref {
         return state;
     }
 
+    public void setHighscore(int highScore) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("highScore", highScore);
+        editor.apply();
+    }
+
+    public int loadHighScore() {
+        int highScore = sharedPref.getInt("highScore", 0);
+        return highScore;
+    }
+
 }

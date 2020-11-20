@@ -1,6 +1,6 @@
- package com.example.pacman;
+package com.example.pacman;
 
- import android.content.Context;
+import android.content.Context;
  import android.content.Intent;
  import android.graphics.Bitmap;
  import android.graphics.BitmapFactory;
@@ -9,8 +9,12 @@
  import android.graphics.Paint;
  import android.graphics.Point;
  import android.graphics.Rect;
- import android.os.Handler;
- import android.util.AttributeSet;
+ import android.location.Location;
+import android.media.MediaPlayer;
+import android.os.Handler;
+import android.service.autofill.FillEventHistory;
+import android.util.AttributeSet;
+ import android.util.Log;
  import android.view.Display;
  import android.view.MotionEvent;
  import android.view.SurfaceHolder;
@@ -20,7 +24,8 @@
  import java.util.ArrayList;
 
 
- public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
+public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
+    private SharedPref sharedPref;
     private Context context;
     private GameThread thread = null;
     private int screenWidth;
@@ -34,13 +39,14 @@
     private int currentPacManFrame = 0;
     private int currentScore = 0;
     private Points points;
-    private Tile blank, floor, pellets;
+    private Tile blank, floor, pellet;
     private Wall wall;
     private Ghost ghost;
     private Pacman pacman;
     private boolean moveUp = false, moveLeft = false, moveRight = true, moveDown = false, isColliding = false;
     private int viewDirection = 2;
     private ArrayList<Tile> walls;
+    private ArrayList<Tile> pellets;
     public static int LONG_PRESS_TIME=750;
     final Handler handler = new Handler();
 
@@ -48,10 +54,8 @@
     public DrawGame(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        this.sharedPref = new SharedPref(context);
         getHolder().addCallback(this);
-
-        points = new Points(0,0);
-        paint = new Paint();
 
         createTileMap();
 
@@ -62,17 +66,19 @@
 
         screenWidth = screenSize.x;
 
-        TILE_SIZE = screenWidth / 17;
+        TILE_SIZE = screenWidth / cols;
 
         loadBitmapImages();
 
+        paint = new Paint();
+        points = new Points();
         blank = new Tile(TILE_SIZE, context);
         floor = new Tile(TILE_SIZE, context);
         ghost = new Ghost(TILE_SIZE, context);
         pacman = new Pacman(TILE_SIZE, context);
-        pellets = new Tile(TILE_SIZE, context);
 
         walls = new ArrayList<>();
+        pellets = new ArrayList<>();
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++){
@@ -84,7 +90,7 @@
 
         pacman.setTilePosition(8 * TILE_SIZE, 12 * TILE_SIZE);
 
-        points.setHighScore(0);
+        points.setHighScore(sharedPref.loadHighScore());
 
     }
 
@@ -156,8 +162,8 @@
     public void draw(Canvas canvas) {
         super.draw(canvas);
         drawMap(canvas);
-        checkCollision();
-        drawPellets(canvas);
+        checkPelletCollision();
+        checkWallCollision();
         drawPacMan(canvas);
         ghost.draw(canvas, tileMap);
         updateScores(canvas);
@@ -166,8 +172,9 @@
     public void updateScores(Canvas canvas){
         paint.setTextSize((float) (TILE_SIZE / 1.1));
 
-        if(currentScore > points.getHighScore()) {
-            points.setHighScore(currentScore);
+        if(points.getScore() > points.getHighScore()) {
+            points.setHighScore(points.getScore());
+            sharedPref.setHighscore(points.getHighScore());
         }
 
         String formattedHighScore = String.format("%05d", points.getHighScore());
@@ -195,9 +202,15 @@
                         wall.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
                         walls.add(wall);
                         canvas.drawBitmap(wallBitmap, null, wall.getBounds(),null);
-
                         break;
                     case 2:
+                        pellet = new Tile(TILE_SIZE, context);
+                        pellet.setTilePosition(x * TILE_SIZE, y * TILE_SIZE);
+                        pellets.add(pellet);
+                        paint.setColor(Color.parseColor("#A3A3A3"));
+                        paint.setStrokeWidth(8);
+                        canvas.drawCircle(pellet.getX() + pellet.getTILE_SIZE() / 2, pellet.getY() + pellet.getTILE_SIZE() / 2, pellet.getTILE_SIZE() / 10, paint);
+                        break;
                     case 4:
                         floor.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
                         canvas.drawBitmap(floorBitmap, null, floor.getBounds(),null);
@@ -258,7 +271,8 @@
          return true;
      }
 
-    public void checkCollision() {
+    public void checkWallCollision() {
+        //Wall collision
         for (Tile tile: walls) {
             Rect player = pacman.getBounds();
             Rect wall = tile.getBounds();
@@ -285,28 +299,44 @@
         }
     }
 
+    public void checkPelletCollision() {
+        float x = pacman.getX();
+        float y = pacman.getY();
+        int indexX = (int) x / pacman.getTILE_SIZE();
+        int indexY = (int) y / pacman.getTILE_SIZE();
+        int levelPos = tileMap[indexY][indexX];
+
+        boolean test = false;
+        Tile pelletTile = null;
+
+        for (Tile tile : pellets) {
+            Rect player = pacman.getBounds();
+            Rect pellet = tile.getBounds();
+            if (player.contains(pellet) && levelPos == 2) {
+                test = true;
+                pelletTile = tile;
+                tileMap[indexY][indexX] = 5;
+            }
+        }
+        if (test) {
+            points.isEaten();
+            pellets.remove(pelletTile);
+        }
+    }
+
     public void drawPacMan(Canvas canvas) {
-
-//        float x = pacman.getX();
-//        float y = pacman.getY();
-//        int indexX = (int) x / pacman.getTILE_SIZE();
-//        int indexY = (int) y / pacman.getTILE_SIZE();
-
-//        int levelPos = tileMap[indexY][indexX];
-
-
         if (!isColliding) {
             if (moveUp && pathUp()) {
                 viewDirection = 0;
             } else if (moveRight && pathRight()) {
                 viewDirection = 2;
-                if (pacman.getX() > screenWidth) {
+                if (pacman.getX() + pacman.getTILE_SIZE() / 2 > screenWidth) {
                     pacman.setTilePosition(-pacman.getTILE_SIZE(), pacman.getY());
                 }
             } else if (moveLeft && pathLeft()) {
                 viewDirection = 1;
-                if (pacman.getX() < -pacman.getTILE_SIZE()) {
-                    pacman.setTilePosition(screenWidth, pacman.getY());
+                if (pacman.getX() < -pacman.getTILE_SIZE() / 2) {
+                    pacman.setTilePosition(screenWidth / cols * cols, pacman.getY());
                 }
             } else if (moveDown && pathDown()) {
                 viewDirection = 3;
@@ -329,22 +359,6 @@
             default:
                 pacman.moveDown(4);
                 canvas.drawBitmap(pacManDown[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 2.5), paint);
-        }
-    }
-
-    public void drawPellets(Canvas canvas) {
-
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
-
-                pellets.setTilePosition(x * TILE_SIZE, y * TILE_SIZE);
-
-                if (tileMap[y][x] == 2) {
-                    paint.setColor(Color.parseColor("#A3A3A3"));
-                    paint.setStrokeWidth(8);
-                    canvas.drawCircle(pellets.getX() + pellets.getTILE_SIZE() / 2, pellets.getY() + pellets.getTILE_SIZE() / 2, pellets.getTILE_SIZE() / 10, paint);
-                }
-            }
         }
     }
 
