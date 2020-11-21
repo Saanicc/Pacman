@@ -3,14 +3,11 @@ package com.example.pacman;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 
 public class Settings extends AppCompatActivity {
-    private MediaPlayer mediaPlayer;
     private SwitchCompat switchCompat;
     private SharedPref sharedPref;
 

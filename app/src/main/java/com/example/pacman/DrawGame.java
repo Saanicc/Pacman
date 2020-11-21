@@ -1,27 +1,23 @@
 package com.example.pacman;
 
 import android.content.Context;
- import android.content.Intent;
- import android.graphics.Bitmap;
- import android.graphics.BitmapFactory;
- import android.graphics.Canvas;
- import android.graphics.Color;
- import android.graphics.Paint;
- import android.graphics.Point;
- import android.graphics.Rect;
- import android.location.Location;
-import android.media.MediaPlayer;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Handler;
-import android.service.autofill.FillEventHistory;
 import android.util.AttributeSet;
- import android.util.Log;
- import android.view.Display;
- import android.view.MotionEvent;
- import android.view.SurfaceHolder;
- import android.view.SurfaceView;
- import android.view.WindowManager;
+import android.view.Display;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.WindowManager;
 
- import java.util.ArrayList;
+import java.util.ArrayList;
 
 
 public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
@@ -34,7 +30,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private int rows, cols;
     private int totalFrame = 4;
     private Bitmap[] pacManUp, pacManRight, pacManDown, pacManLeft;
-    private Bitmap wallBitmap, floorBitmap;
+    private Bitmap wallBitmap;
     private Paint paint;
     private int currentPacManFrame = 0;
     private int currentScore = 0;
@@ -48,7 +44,9 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private ArrayList<Tile> walls;
     private ArrayList<Tile> pellets;
     public static int LONG_PRESS_TIME=750;
-    final Handler handler = new Handler();
+    private final Handler handler = new Handler();
+    private boolean gameJustStarted = false;
+    private boolean eat = false;
 
 
     public DrawGame(Context context, AttributeSet attrs) {
@@ -91,6 +89,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         pacman.setTilePosition(8 * TILE_SIZE, 12 * TILE_SIZE);
 
         points.setHighScore(sharedPref.loadHighScore());
+
+        gameJustStarted = true;
 
     }
 
@@ -156,6 +156,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         if (currentPacManFrame >= 4) {
             currentPacManFrame = 0;
         }
+
     }
 
     @Override
@@ -187,10 +188,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void drawMap(Canvas canvas) {
-
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < cols; x++) {
-
                 switch (tileMap[y][x]) {
                     case 0:
                         blank.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
@@ -198,33 +197,52 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                         canvas.drawRect(blank.getX(), blank.getY(), blank.getX() + blank.getTILE_SIZE(), blank.getY() + blank.getTILE_SIZE(), paint);
                         break;
                     case 1:
-                        wall = new Wall(TILE_SIZE, context);
-                        wall.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
-                        walls.add(wall);
-                        canvas.drawBitmap(wallBitmap, null, wall.getBounds(),null);
+                        placeWalls(x, y, canvas);
                         break;
                     case 2:
-                        pellet = new Tile(TILE_SIZE, context);
-                        pellet.setTilePosition(x * TILE_SIZE, y * TILE_SIZE);
-                        pellets.add(pellet);
-                        paint.setColor(Color.parseColor("#A3A3A3"));
-                        paint.setStrokeWidth(8);
-                        canvas.drawCircle(pellet.getX() + pellet.getTILE_SIZE() / 2, pellet.getY() + pellet.getTILE_SIZE() / 2, pellet.getTILE_SIZE() / 10, paint);
-                        break;
-                    case 4:
-                        floor.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
-                        canvas.drawBitmap(floorBitmap, null, floor.getBounds(),null);
+                        placePellets(x, y, canvas);
                         break;
                     case 3:
                         floor.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
-                        canvas.drawBitmap(floorBitmap, null, floor.getBounds(),null);
                         paint.setColor(Color.GRAY);
                         paint.setStrokeWidth(8);
-                        canvas.drawLine(floor.getX(), floor.getY() + 5, floor.getX() + TILE_SIZE, floor.getY() + 5, paint);
+                        canvas.drawLine(floor.getX(), floor.getY() + floor.getTILE_SIZE() / 15, floor.getX() + TILE_SIZE, floor.getY() + floor.getTILE_SIZE() / 15, paint);
+                        break;
+                    case 4:
+                        floor.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
                         break;
                 }
             }
         }
+        gameJustStarted = false;
+    }
+
+    public void placeWalls(int x, int y, Canvas canvas) {
+        if (gameJustStarted) {
+            wall = new Wall(TILE_SIZE, context);
+            wall.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
+            walls.add(wall);
+        } else {
+            for (Tile tile: walls) {
+                wall.setTilePosition(x * tile.getTILE_SIZE(), y * tile.getTILE_SIZE());
+            }
+        }
+        canvas.drawBitmap(wallBitmap, null, wall.getBounds(),null);
+    }
+
+    public void placePellets(int x, int y, Canvas canvas) {
+        if (gameJustStarted) {
+            pellet = new Tile(TILE_SIZE, context);
+            pellet.setTilePosition(x * TILE_SIZE, y * TILE_SIZE);
+            pellets.add(pellet);
+        } else {
+            for (Tile tile : pellets) {
+                pellet.setTilePosition(x * tile.getTILE_SIZE(), y * tile.getTILE_SIZE());
+            }
+        }
+        paint.setColor(Color.parseColor("#A3A3A3"));
+        paint.setStrokeWidth(8);
+        canvas.drawCircle(pellet.getX() + pellet.getTILE_SIZE() / 2, pellet.getY() + pellet.getTILE_SIZE() / 2, pellet.getTILE_SIZE() / 10, paint);
     }
 
      public boolean pathUp() {
@@ -306,19 +324,19 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         int indexY = (int) y / pacman.getTILE_SIZE();
         int levelPos = tileMap[indexY][indexX];
 
-        boolean test = false;
+        eat = false;
         Tile pelletTile = null;
 
         for (Tile tile : pellets) {
             Rect player = pacman.getBounds();
             Rect pellet = tile.getBounds();
             if (player.contains(pellet) && levelPos == 2) {
-                test = true;
+                eat = true;
                 pelletTile = tile;
                 tileMap[indexY][indexX] = 5;
             }
         }
-        if (test) {
+        if (eat) {
             points.isEaten();
             pellets.remove(pelletTile);
         }
@@ -377,26 +395,24 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     Runnable longPressed = new Runnable() {
-     public void run() {
-         Intent pauseIntent = new Intent(getContext(), PauseActivity.class);
-         getContext().startActivity(pauseIntent);
-     }
+        public void run() {
+            Intent pauseIntent = new Intent(getContext(), PauseActivity.class);
+            getContext().startActivity(pauseIntent);
+        }
     };
 
     // Method to get touch events
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-     switch (event.getAction()) {
-         case (MotionEvent.ACTION_DOWN): {
-             handler.postDelayed(longPressed, LONG_PRESS_TIME);
-             break;
-         }
-         case (MotionEvent.ACTION_UP): {
-             handler.removeCallbacks(longPressed);
-             break;
-         }
-     }
-     return true;
+        switch (event.getAction()) {
+            case (MotionEvent.ACTION_DOWN):
+                handler.postDelayed(longPressed, LONG_PRESS_TIME);
+                break;
+            case (MotionEvent.ACTION_UP):
+                handler.removeCallbacks(longPressed);
+                break;
+        }
+        return true;
     }
 
     private void loadBitmapImages(){
@@ -444,8 +460,6 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
         wallBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
                 getResources(), R.drawable.wall), TILE_SIZE, TILE_SIZE, false);
-        floorBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
-                getResources(), R.drawable.floor), TILE_SIZE, TILE_SIZE, false);
     }
 
     public void createTileMap() {

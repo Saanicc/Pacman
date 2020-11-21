@@ -1,7 +1,6 @@
 package com.example.pacman;
 
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class GameThread extends Thread {
@@ -9,6 +8,7 @@ public class GameThread extends Thread {
     private boolean running = false;
     private DrawGame canvas = null;
     private SurfaceHolder surfaceHolder = null;
+    private Canvas c;
 
     public GameThread(DrawGame canvas) {
         super();
@@ -34,10 +34,9 @@ public class GameThread extends Thread {
         int targetFPS = 60;
         long targetTime = 1000 / targetFPS;
 
-        Canvas c = null;
         while (running) {
-            startTime = System.nanoTime();
             c = null;
+            startTime = System.nanoTime();
             try {
                 c = surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
@@ -46,8 +45,8 @@ public class GameThread extends Thread {
                         canvas.draw(c);
                     }
                 }
-            } catch (Exception e) {
-            } finally {
+            } catch (Exception e) {}
+            finally {
                 if (c != null) {
                     try {
                         surfaceHolder.unlockCanvasAndPost(c);
@@ -62,11 +61,11 @@ public class GameThread extends Thread {
 
             try {
                 sleep(waitTime);
-            } catch (Exception e) {}
+            } catch (Exception ignored) {}
 
             totalTime += System.nanoTime() - startTime;
             frameCount++;
-            if (frameCount == targetFPS)        {
+            if (frameCount == targetFPS) {
                 float averageFPS = 1000 / ((totalTime / frameCount) / 1000000);
                 frameCount = 0;
                 totalTime = 0;
