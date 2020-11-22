@@ -380,6 +380,10 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             points.isEaten();
             pellets.remove(pelletTile);
         }
+        if (pellets.size() == 130 && !gameJustStarted){
+            wonGame();
+
+        }
     }
 
     public void drawPacMan(Canvas canvas) {
@@ -457,6 +461,11 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                 break;
         }
         return true;
+    }
+
+    public void wonGame(){
+        Intent won = new Intent(getContext(), winlost_acitivity.class);
+        getContext().startActivity(won);
     }
 
     private void loadBitmapImages(){

@@ -9,6 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".winlost_acitivity"
+           android:theme="@style/PauseScreenTheme" />
         <activity
             android:name=".PauseActivity"
             android:theme="@style/PauseScreenTheme" />
