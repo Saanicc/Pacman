@@ -21,6 +21,10 @@ public class Points {
         return score;
     }
 
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public void isEaten() {
         this.score += 20;
     }

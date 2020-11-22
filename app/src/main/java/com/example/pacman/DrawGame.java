@@ -66,6 +66,11 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
         TILE_SIZE = screenWidth / cols;
 
+        initializeGame();
+
+    }
+
+    public void initializeGame() {
         loadBitmapImages();
 
         paint = new Paint();
@@ -78,6 +83,10 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         pellets = new ArrayList<>();
         ghostDoor = new ArrayList<>();
 
+        walls.clear();
+        pellets.clear();
+        ghostDoor.clear();
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++){
                 if (tileMap[i][j] == 4) {
@@ -89,9 +98,9 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         pacman.setTilePosition(8 * TILE_SIZE, 12 * TILE_SIZE);
 
         points.setHighScore(sharedPref.loadHighScore());
+        points.setScore(0);
 
         gameJustStarted = true;
-
     }
 
     public void startGame() {
