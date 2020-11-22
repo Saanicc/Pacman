@@ -464,8 +464,10 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void wonGame(){
+        thread.stopThread();
         Intent won = new Intent(getContext(), winlost_acitivity.class);
         getContext().startActivity(won);
+
     }
 
     private void loadBitmapImages(){
