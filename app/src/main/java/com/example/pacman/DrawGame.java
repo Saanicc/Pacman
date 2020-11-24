@@ -185,11 +185,11 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         String formattedHighScore = String.format("%05d", points.getHighScore());
-        String hScore = "High Score: " + formattedHighScore;
+        String hScore = getResources().getString(R.string.high_score) + " " + formattedHighScore;
         canvas.drawText(hScore, 0, (float) (TILE_SIZE * 1.8), paint);
 
         String formattedScore = String.format("%05d", points.getScore());
-        String score = "Score: " + formattedScore;
+        String score = getResources().getString(R.string.score) + " " + formattedScore;
         canvas.drawText(score, (float) (TILE_SIZE * 11.6), (float) (TILE_SIZE * 1.8), paint);
     }
 

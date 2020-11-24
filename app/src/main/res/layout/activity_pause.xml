@@ -7,14 +7,14 @@
     tools:context=".PauseActivity">
 
     <TextView
-        android:id="@+id/pauseHeader"
+        android:id="@+id/tvPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:shadowColor="#FF3333"
         android:shadowDx="5"
         android:shadowDy="2"
         android:shadowRadius="2"
-        android:text="Game is paused"
+        android:text="@string/tv_pause"
         android:textColor="#FCDA5F"
         android:textSize="40sp"
         android:textStyle="bold"
@@ -31,12 +31,12 @@
         android:background="@drawable/custom_button_design"
         android:focusable="true"
         android:onClick="resumeGame"
-        android:text="Resume game"
+        android:text="@string/resume_game"
         android:textAllCaps="false"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pauseHeader" />
+        app:layout_constraintTop_toBottomOf="@+id/tvPause" />
 
     <Button
         android:id="@+id/newGame"
@@ -46,7 +46,7 @@
         android:background="@drawable/custom_button_design"
         android:focusable="true"
         android:onClick="startGame"
-        android:text="New game"
+        android:text="@string/new_game"
         android:textAllCaps="false"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,7 +61,7 @@
         android:background="@drawable/custom_button_design"
         android:focusable="true"
         android:onClick="startSettingsActivity"
-        android:text="Settings"
+        android:text="@string/settings"
         android:textAllCaps="false"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
         android:background="@drawable/custom_button_design"
         android:focusable="true"
         android:onClick="homePage"
-        android:text="Home"
+        android:text="@string/home"
         android:textAllCaps="false"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
