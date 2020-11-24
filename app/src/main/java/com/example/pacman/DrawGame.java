@@ -46,6 +46,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private final Handler handler = new Handler();
     private boolean gameJustStarted = false;
     private boolean eat = false;
+    private String won, lost;
 
 
     public DrawGame(Context context, AttributeSet attrs) {
@@ -70,6 +71,9 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
     public void initializeGame() {
         loadBitmapImages();
+
+        won = getResources().getString(R.string.tv_won);
+        lost = getResources().getString(R.string.tv_lost);
 
         paint = new Paint();
         points = new Points();
@@ -163,6 +167,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         if (currentPacManFrame >= 4) {
             currentPacManFrame = 0;
         }
+        checkGhostPlayerCollision();
         checkPelletCollision();
         checkWallCollision();
     }
@@ -383,6 +388,14 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    public void checkGhostPlayerCollision() {
+        Rect player = pacman.getBounds();
+        Rect enemy = ghost.getBounds();
+        if (Rect.intersects(enemy, player)) {
+            lostGame();
+        }
+    }
+
     public void drawPacMan(Canvas canvas) {
         if (!isColliding) {
             if (moveUp && pathUp()) {
@@ -422,6 +435,12 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void drawGhost(Canvas canvas) {
+        ghost.moveRight(4);
+        if (ghost.getX() + ghost.getTILE_SIZE() / 2 > screenWidth / cols * cols) {
+            ghost.setTilePosition(-ghost.getTILE_SIZE() / 2, ghost.getY());
+        } else if (ghost.getX() < -ghost.getTILE_SIZE() / 2) {
+            ghost.setTilePosition(screenWidth * cols / cols, ghost.getY());
+        }
         canvas.drawBitmap(ghostBitmap, null, ghost.getBounds(), null);
     }
 
@@ -462,8 +481,14 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
     public void wonGame(){
         Intent wonLost = new Intent(getContext(), WinLostActivity.class);
+        wonLost.putExtra("wonLost", won);
         getContext().startActivity(wonLost);
+    }
 
+    public void lostGame(){
+        Intent wonLost = new Intent(getContext(), WinLostActivity.class);
+        wonLost.putExtra("wonLost", lost);
+        getContext().startActivity(wonLost);
     }
 
     private void loadBitmapImages(){

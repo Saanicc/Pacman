@@ -57,7 +57,7 @@
     <!-- Pause menu strings -->
     <string name="tv_pause">Spelet är pausat</string>
     <string name="resume_game">Återgå till spelet</string>
-    <string name="home">Hemskärm</string>
+    <string name="home">Hem</string>
 
     <!-- Win/Lost strings -->
     <string name="tv_won">DU VANN!!</string>

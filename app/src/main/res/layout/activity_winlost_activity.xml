@@ -26,7 +26,6 @@
         android:shadowDx="5"
         android:shadowDy="2"
         android:shadowRadius="2"
-        android:text="YOU WON !!!"
         android:textColor="#FCDA5F"
         android:textSize="40sp"
         android:textStyle="bold"
