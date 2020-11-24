@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/backgroundImg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
@@ -17,10 +17,10 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/pacman1"
         android:layout_width="262dp"
         android:layout_height="227dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -30,19 +30,52 @@
         app:layout_constraintVertical_bias="0.060000002"
         app:srcCompat="@drawable/pacmanbild3" />
 
+    <TextView
+        android:id="@+id/startHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowColor="#FF3333"
+        android:shadowDx="5"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:text="Pacman"
+        android:textColor="#FCDA5F"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pacman1"
+        app:layout_constraintVertical_bias="0.3" />
+
     <Button
-        android:id="@+id/startButton"
+        android:id="@+id/newGame"
         android:layout_width="110dp"
         android:layout_height="42.5dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/custom_button_design"
+        android:focusable="true"
         android:onClick="startGame"
         android:text="New game"
         android:textAllCaps="false"
-        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/startHeader" />
+
+    <Button
+        android:id="@+id/howToPlay"
+        android:layout_width="110dp"
+        android:layout_height="42.5dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/custom_button_design"
+        android:focusable="true"
+        android:onClick="startHelp"
+        android:text="How to play"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newGame" />
 
     <Button
         android:id="@+id/settings"
@@ -50,12 +83,12 @@
         android:layout_height="42.5dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/custom_button_design"
+        android:focusable="true"
         android:onClick="startSettingsActivity"
         android:text="Settings"
         android:textAllCaps="false"
-        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/howToPlay" />
 
@@ -65,46 +98,13 @@
         android:layout_height="42.5dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/custom_button_design"
+        android:focusable="true"
         android:onClick="startActivityAbout"
         android:text="About"
         android:textAllCaps="false"
-        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings" />
-
-    <Button
-        android:id="@+id/howToPlay"
-        android:layout_width="110dp"
-        android:layout_height="42.5dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/custom_button_design"
-        android:onClick="startHelp"
-        android:text="How to play"
-        android:textAllCaps="false"
-        android:focusable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startButton" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:shadowColor="#FF3333"
-        android:shadowDx="5"
-        android:shadowDy="2"
-        android:shadowRadius="2"
-        android:text="PacMan"
-        android:textColor="#FCDA5F"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

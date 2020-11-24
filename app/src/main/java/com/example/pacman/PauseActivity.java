@@ -25,11 +25,18 @@ public class PauseActivity extends AppCompatActivity {
     public void startGame(View view) {
         Intent startGame = new Intent(this, GameActivity.class);
         startActivity(startGame.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        overridePendingTransition(0, 0);
     }
 
     public void startSettingsActivity(View view) {
         Intent settings = new Intent(this, Settings.class);
         startActivity(settings);
+        overridePendingTransition(0, 0);
+    }
+
+    public void homePage(View view){
+        Intent homePage = new Intent(this, MainActivity.class);
+        startActivity(homePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         overridePendingTransition(0, 0);
     }
 

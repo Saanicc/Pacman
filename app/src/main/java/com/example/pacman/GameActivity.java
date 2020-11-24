@@ -21,6 +21,18 @@ public class GameActivity extends Activity {
         loadMusic();
     }
 
+    @Override
+    protected void onPause() {
+        drawGame.stopGame();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        drawGame.startGame();
+        super.onResume();
+    }
+
     public void dPadLeft(View view){
         drawGame.dPadLeft();
     }
@@ -35,16 +47,6 @@ public class GameActivity extends Activity {
 
     public void dPadDown(View view){
         drawGame.dPadDown();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     public void loadMusic() {

@@ -11,7 +11,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -67,7 +66,6 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         TILE_SIZE = screenWidth / cols;
 
         initializeGame();
-
     }
 
     public void initializeGame() {
@@ -380,9 +378,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             points.isEaten();
             pellets.remove(pelletTile);
         }
-        if (pellets.size() == 130 && !gameJustStarted){
+        if (pellets.size() <= 0 && !gameJustStarted) {
             wonGame();
-
         }
     }
 
@@ -464,9 +461,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void wonGame(){
-        thread.stopThread();
-        Intent won = new Intent(getContext(), winlost_acitivity.class);
-        getContext().startActivity(won);
+        Intent wonLost = new Intent(getContext(), WinLostActivity.class);
+        getContext().startActivity(wonLost);
 
     }
 
