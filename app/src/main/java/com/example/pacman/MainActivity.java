@@ -3,6 +3,7 @@ package com.example.pacman;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -25,12 +26,14 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.setVolume(100, 100);
                 mediaPlayer.setLooping(true);
                 mediaPlayer.start();
+                Log.d("TEST", "Music on");
             } else if (!sharedPref.loadMusicState()){
                 mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
                 mediaPlayer.setVolume(100, 100);
                 mediaPlayer.setLooping(true);
                 mediaPlayer.start();
                 mediaPlayer.pause();
+                Log.d("TEST", "Music off");
             }
         } else {
             mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer.setLooping(true);
             mediaPlayer.start();
             sharedPref.setMusicState(true);
+            Log.d("TEST", "Fresh start - music on");
         }
     }
 
@@ -66,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static MediaPlayer getMediaPlayer() {
         return mediaPlayer;
+    }
+
+    public static void setMedia(MediaPlayer media) {
+        mediaPlayer = media;
     }
 
     @Override
