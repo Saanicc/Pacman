@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class WinLostActivity extends AppCompatActivity {
 
     private String wonLost;
+    private boolean wonGame;
     private TextView tvWonLost;
+    private ImageView pacmanImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +23,15 @@ public class WinLostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_winlost_activity);
         Intent intent = getIntent();
         wonLost = intent.getStringExtra("wonLost");
+        wonGame = intent.getBooleanExtra("wonGame", false);
         tvWonLost = findViewById(R.id.tvWonLost);
+        pacmanImage = findViewById(R.id.pacman1);
+        if (wonGame){
+            pacmanImage.setImageResource(R.drawable.pacmanbild1);
+        } else {
+            pacmanImage.setImageResource(R.drawable.pacmanbild2);
+        }
+
         tvWonLost.setText(wonLost);
     }
 

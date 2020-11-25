@@ -47,6 +47,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private boolean gameJustStarted = false;
     private boolean eat = false;
     private String won, lost;
+    private boolean wonGame;
 
 
     public DrawGame(Context context, AttributeSet attrs) {
@@ -74,6 +75,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
         won = getResources().getString(R.string.tv_won);
         lost = getResources().getString(R.string.tv_lost);
+        wonGame = false;
 
         paint = new Paint();
         points = new Points();
@@ -480,14 +482,18 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void wonGame(){
+        wonGame = true;
         Intent wonLost = new Intent(getContext(), WinLostActivity.class);
         wonLost.putExtra("wonLost", won);
+        wonLost.putExtra("wonGame", wonGame);
         getContext().startActivity(wonLost);
     }
 
     public void lostGame(){
+        wonGame = false;
         Intent wonLost = new Intent(getContext(), WinLostActivity.class);
         wonLost.putExtra("wonLost", lost);
+        wonLost.putExtra("wonGame", wonGame);
         getContext().startActivity(wonLost);
     }
 
