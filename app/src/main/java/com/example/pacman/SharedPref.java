@@ -2,6 +2,7 @@ package com.example.pacman;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 
 public class SharedPref {
 
@@ -32,5 +33,27 @@ public class SharedPref {
         int highScore = sharedPref.getInt("highScore", 0);
         return highScore;
     }
+
+    public void songToPlay(int song) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("song", song);
+        editor.apply();
+    }
+
+    public int loadSong() {
+        int song = 0;
+        int songToPlay = sharedPref.getInt("song", 0);
+        if (songToPlay == 1) {
+            song = 1;
+        } else if (songToPlay == 2) {
+            song = 2;
+        }
+        return song;
+    }
+
+//    public boolean loadCheckedRadioButton() {
+//        boolean state = sharedPref.getBoolean("song1", false);
+//        return state;
+//    }
 
 }

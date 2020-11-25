@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-
         if (sharedPref != null) {
             if (sharedPref.loadMusicState()) {
                 mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
@@ -40,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer.start();
             sharedPref.setMusicState(true);
         }
-
-
     }
 
     public void startSettingsActivity(View view) {
@@ -60,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         Intent startActivityHelp = new Intent(this, HelpActivity.class);
         startActivity(startActivityHelp);
         overridePendingTransition(0, 0);
-
     }
 
     public void startGame(View view){

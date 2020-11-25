@@ -2,6 +2,7 @@ package com.example.pacman;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -24,11 +25,13 @@ public class GameActivity extends Activity {
     @Override
     protected void onPause() {
         drawGame.stopGame();
+        DrawGame.gameIsPaused = true;
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        DrawGame.gameIsPaused = false;
         drawGame.startGame();
         super.onResume();
     }
