@@ -47,7 +47,7 @@ public class PauseActivity extends AppCompatActivity {
 
     public void homePage(View view){
         Intent homePage = new Intent(this, MainActivity.class);
-        startActivity(homePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        startActivity(homePage.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
         overridePendingTransition(0, 0);
     }
 

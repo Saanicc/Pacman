@@ -9,7 +9,7 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    private static MediaPlayer mediaPlayer;
+
     private SharedPref sharedPref;
 
     @Override
@@ -21,23 +21,29 @@ public class MainActivity extends AppCompatActivity {
 
         if (sharedPref != null) {
             if (sharedPref.loadMusicState()) {
-                mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
-                mediaPlayer.setVolume(100, 100);
-                mediaPlayer.setLooping(true);
-                mediaPlayer.start();
+                if (sharedPref.loadSong() == 1) {
+                    Settings.setMedia(MediaPlayer.create(this, R.raw.pacman_song));
+                    Settings.getMediaPlayer().start();
+                } else if (sharedPref.loadSong() == 2) {
+                    Settings.setMedia(MediaPlayer.create(this, R.raw.tetris_song));
+                }
+                Settings.getMediaPlayer().setVolume(100, 100);
+                Settings.getMediaPlayer().setLooping(true);
+                Settings.getMediaPlayer().start();
             } else if (!sharedPref.loadMusicState()){
-                mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
-                mediaPlayer.setVolume(100, 100);
-                mediaPlayer.setLooping(true);
-                mediaPlayer.start();
-                mediaPlayer.pause();
+                Settings.setMedia(MediaPlayer.create(this, R.raw.pacman_song));
+                Settings.getMediaPlayer().setVolume(100, 100);
+                Settings.getMediaPlayer().setLooping(true);
+                Settings.getMediaPlayer().start();
+                Settings.getMediaPlayer().pause();
             }
         } else {
-            mediaPlayer = MediaPlayer.create(this, R.raw.pacman_song);
-            mediaPlayer.setVolume(100, 100);
-            mediaPlayer.setLooping(true);
-            mediaPlayer.start();
+            Settings.setMedia(MediaPlayer.create(this, R.raw.pacman_song));
+            Settings.getMediaPlayer().setVolume(100, 100);
+            Settings.getMediaPlayer().setLooping(true);
+            Settings.getMediaPlayer().start();
             sharedPref.setMusicState(true);
+            sharedPref.songToPlay(1);
         }
     }
 
@@ -64,14 +70,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(startGame);
     }
 
-    public static MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
-    }
-
     @Override
     public void onPause(){
         super.onPause();
-        mediaPlayer.pause();
+        Settings.getMediaPlayer().pause();
     }
 
     @Override
@@ -80,11 +82,19 @@ public class MainActivity extends AppCompatActivity {
         loadMusic();
     }
 
+    @Override
+    public void onBackPressed(){
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory( Intent.CATEGORY_HOME );
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
+    }
+
     public void loadMusic() {
         if (sharedPref.loadMusicState()) {
-            mediaPlayer.start();
+            Settings.getMediaPlayer().start();
         } else if (!sharedPref.loadMusicState()) {
-            mediaPlayer.pause();
+            Settings.getMediaPlayer().pause();
         }
     }
 }

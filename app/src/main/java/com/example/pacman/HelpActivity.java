@@ -27,9 +27,9 @@ public class HelpActivity extends AppCompatActivity {
 
     public void loadMusic() {
         if (sharedPref.loadMusicState()) {
-            MainActivity.getMediaPlayer().start();
+            Settings.getMediaPlayer().start();
         } else if (!sharedPref.loadMusicState()) {
-            MainActivity.getMediaPlayer().pause();
+            Settings.getMediaPlayer().pause();
         }
     }
 }
