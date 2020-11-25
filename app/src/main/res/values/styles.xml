@@ -12,11 +12,6 @@
         <item name="colorSwitchThumbNormal">#9F9F9F</item>
     </style>
 
-    <style name="CustomRadioButtonTheme" parent="Theme.AppCompat.Light">
-        <item name="colorControlActivated">@color/buttonNotPressed</item>
-        <item name="colorControlNormal">#9F9F9F</item>
-    </style>
-
     <style name="PauseScreenTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">#80000000</item>

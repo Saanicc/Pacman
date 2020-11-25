@@ -54,9 +54,9 @@ public class GameActivity extends Activity {
 
     public void loadMusic() {
         if (sharedPref.loadMusicState()) {
-            Settings.getMediaPlayer().start();
+            MainActivity.getMediaPlayer().start();
         } else if (!sharedPref.loadMusicState()) {
-            Settings.getMediaPlayer().pause();
+            MainActivity.getMediaPlayer().pause();
         }
     }
 }
