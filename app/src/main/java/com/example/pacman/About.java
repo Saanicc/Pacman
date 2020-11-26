@@ -22,8 +22,15 @@ public class About extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onResume() {
+        super.onResume();
+        loadMusic();
+    }
+
+    @Override
+    protected void onPause() {
         super.onPause();
+        MainActivity.getMediaPlayer().pause();
         overridePendingTransition(0, 0);
     }
 

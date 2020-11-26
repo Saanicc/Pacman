@@ -39,6 +39,8 @@
 
     <!-- Settings strings -->
     <string name="music">Music</string>
+    <string name="song_one">Song 1</string>
+    <string name="song_two">Song 2</string>
 
     <!-- About strings -->
     <string name="tv_about_header">Made by Team5</string>

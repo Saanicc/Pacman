@@ -10,8 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class PauseActivity extends AppCompatActivity {
 
+    private SharedPref sharedPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_pause);
@@ -21,11 +24,13 @@ public class PauseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loadMusic();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        MainActivity.getMediaPlayer().pause();
     }
 
     public void resumeGame(View view) {
@@ -47,8 +52,15 @@ public class PauseActivity extends AppCompatActivity {
 
     public void homePage(View view){
         Intent homePage = new Intent(this, MainActivity.class);
-        startActivity(homePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        startActivity(homePage.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
         overridePendingTransition(0, 0);
     }
 
+    public void loadMusic() {
+        if (sharedPref.loadMusicState()) {
+            MainActivity.getMediaPlayer().start();
+        } else if (!sharedPref.loadMusicState()) {
+            MainActivity.getMediaPlayer().pause();
+        }
+    }
 }

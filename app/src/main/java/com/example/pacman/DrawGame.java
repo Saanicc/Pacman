@@ -309,8 +309,10 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
         for (Tile tile : ghostDoor) {
-            if (pacman.getY() + pacman.getTILE_SIZE() == tile.getY()) {
-                if (pacman.getX() < tile.getX() + tile.getTILE_SIZE() && pacman.getX() + pacman.getTILE_SIZE() > tile.getX()) {
+            if (pacman.getY() + pacman.getTILE_SIZE() == tile.getY()
+                || ghost.getY() + ghost.getTILE_SIZE() == tile.getY()) {
+                if (pacman.getX() < tile.getX() + tile.getTILE_SIZE() && pacman.getX() + pacman.getTILE_SIZE() > tile.getX()
+                || ghost.getX() < tile.getX() + tile.getTILE_SIZE() && ghost.getX() + ghost.getTILE_SIZE() > tile.getX()) {
                     return false;
                 }
             }
@@ -418,11 +420,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         if (levelPos == 4 || levelPos == 3 || ghost.getBounds().bottom > door.getBounds().top) {
             insideCage = true;
             ghostPreviousDirection = 0;
-            //close the gate
-            Log.d("TEST", "Ghost hasn't left spawn!");
         } else {
             insideCage = false;
-            Log.d("TEST", "Ghost left spawn!");
         }
         if (pathUp(ghost)) {
             ghost.moveUp(4);

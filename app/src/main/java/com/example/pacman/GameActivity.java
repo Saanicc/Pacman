@@ -27,6 +27,7 @@ public class GameActivity extends Activity {
         drawGame.stopGame();
         DrawGame.gameIsPaused = true;
         super.onPause();
+        MainActivity.getMediaPlayer().pause();
     }
 
     @Override
@@ -34,6 +35,7 @@ public class GameActivity extends Activity {
         DrawGame.gameIsPaused = false;
         drawGame.startGame();
         super.onResume();
+        loadMusic();
     }
 
     public void dPadLeft(View view){

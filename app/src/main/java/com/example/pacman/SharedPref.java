@@ -18,9 +18,8 @@ public class SharedPref {
         editor.apply();
     }
 
-    public Boolean loadMusicState() {
-        Boolean state = sharedPref.getBoolean("MusicState", true);
-        return state;
+    public boolean loadMusicState() {
+        return sharedPref.getBoolean("MusicState", true);
     }
 
     public void setHighscore(int highScore) {
@@ -30,8 +29,7 @@ public class SharedPref {
     }
 
     public int loadHighScore() {
-        int highScore = sharedPref.getInt("highScore", 0);
-        return highScore;
+        return sharedPref.getInt("highScore", 0);
     }
 
     public void songToPlay(int song) {
@@ -51,9 +49,14 @@ public class SharedPref {
         return song;
     }
 
-//    public boolean loadCheckedRadioButton() {
-//        boolean state = sharedPref.getBoolean("song1", false);
-//        return state;
-//    }
+    public void setFreshStart(boolean state) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("FRESH_START", state);
+        editor.apply();
+    }
+
+    public boolean freshStart() {
+        return sharedPref.getBoolean("FRESH_START", true);
+    }
 
 }

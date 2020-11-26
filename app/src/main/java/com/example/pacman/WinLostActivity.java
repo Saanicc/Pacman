@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 public class WinLostActivity extends AppCompatActivity {
 
+    private SharedPref sharedPref;
     private String wonLost;
     private boolean wonGame;
     private TextView tvWonLost;
@@ -18,6 +19,7 @@ public class WinLostActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_winlost_activity);
@@ -35,6 +37,18 @@ public class WinLostActivity extends AppCompatActivity {
         tvWonLost.setText(wonLost);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadMusic();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainActivity.getMediaPlayer().pause();
+    }
+
     public void startGame(View view) {
         Intent startGame = new Intent(this, GameActivity.class);
         startActivity(startGame.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
@@ -42,6 +56,14 @@ public class WinLostActivity extends AppCompatActivity {
 
     public void homePage(View view){
         Intent homePage = new Intent(this, MainActivity.class);
-        startActivity(homePage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        startActivity(homePage.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+    }
+
+    public void loadMusic() {
+        if (sharedPref.loadMusicState()) {
+            MainActivity.getMediaPlayer().start();
+        } else if (!sharedPref.loadMusicState()) {
+            MainActivity.getMediaPlayer().pause();
+        }
     }
 }
