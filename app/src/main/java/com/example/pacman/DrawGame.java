@@ -43,7 +43,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private boolean moveUp = false, moveLeft = false, moveRight = true, moveDown = false, isColliding = false;
     private int viewDirection = 2;
     private ArrayList<Tile> walls, pellets, ghostDoor, ghostFloors;
-    public static int LONG_PRESS_TIME=750;
+    public static int LONG_PRESS_TIME = 750;
     private final Handler handler = new Handler();
     private boolean gameJustStarted = false;
     public static boolean gameIsPaused = false;
@@ -52,6 +52,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     private boolean wonGame;
     private boolean insideCage = true;
     private int ghostPreviousDirection = 0;
+    private int ghostDirection = 0;
+    private int ghostShortestPath = 0;
 
 
     public DrawGame(Context context, AttributeSet attrs) {
@@ -97,7 +99,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         ghostDoor.clear();
 
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++){
+            for (int j = 0; j < cols; j++) {
                 if (tileMap[i][j] == 4) {
                     ghost.setTilePosition(TILE_SIZE * j, TILE_SIZE * i);
                 }
@@ -127,13 +129,15 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                 try {
                     thread.join();
                     retry = false;
-                } catch (InterruptedException e) {e.printStackTrace();}
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 thread = null;
             }
         }
     }
 
-    public void dPadLeft(){
+    public void dPadLeft() {
         if (viewDirection == 1) return;
         moveLeft = true;
         moveDown = false;
@@ -142,7 +146,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         isColliding = false;
     }
 
-    public void dPadUp(){
+    public void dPadUp() {
         if (viewDirection == 0) return;
         moveLeft = false;
         moveDown = false;
@@ -151,7 +155,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         isColliding = false;
     }
 
-    public void dPadRight(){
+    public void dPadRight() {
         if (viewDirection == 2) return;
         moveLeft = false;
         moveDown = false;
@@ -160,7 +164,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         isColliding = false;
     }
 
-    public void dPadDown(){
+    public void dPadDown() {
         if (viewDirection == 3) return;
         moveLeft = false;
         moveDown = true;
@@ -168,6 +172,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         moveUp = false;
         isColliding = false;
     }
+
 
     public void update() {
         currentPacManFrame++;
@@ -177,6 +182,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         checkPelletCollision();
         checkWallCollision(pacman);
         checkWallCollision(ghost);
+
         if (insideCage) {
             getGhostOut();
         }
@@ -191,10 +197,10 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         updateScores(canvas);
     }
 
-    public void updateScores(Canvas canvas){
+    public void updateScores(Canvas canvas) {
         paint.setTextSize((float) (TILE_SIZE / 1.1));
 
-        if(points.getScore() > points.getHighScore()) {
+        if (points.getScore() > points.getHighScore()) {
             points.setHighScore(points.getScore());
             sharedPref.setHighscore(points.getHighScore());
         }
@@ -232,7 +238,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                             ghostFloor.setTilePosition(x * TILE_SIZE, y * TILE_SIZE);
                             ghostFloors.add(ghostFloor);
                         } else {
-                            for (Tile tile: ghostFloors) {
+                            for (Tile tile : ghostFloors) {
                                 tile.setTilePosition(x * tile.getTILE_SIZE(), y * tile.getTILE_SIZE());
                             }
                         }
@@ -248,11 +254,11 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             wall.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
             walls.add(wall);
         } else {
-            for (Tile tile: walls) {
+            for (Tile tile : walls) {
                 wall.setTilePosition(x * tile.getTILE_SIZE(), y * tile.getTILE_SIZE());
             }
         }
-        canvas.drawBitmap(wallBitmap, null, wall.getBounds(),null);
+        canvas.drawBitmap(wallBitmap, null, wall.getBounds(), null);
     }
 
     public void placePellets(int x, int y, Canvas canvas) {
@@ -278,7 +284,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             door.setTilePosition(TILE_SIZE * x, TILE_SIZE * y);
             ghostDoor.add(door);
         } else {
-            for (Tile tile: ghostDoor) {
+            for (Tile tile : ghostDoor) {
                 door.setTilePosition(x * tile.getTILE_SIZE(), y * tile.getTILE_SIZE());
             }
         }
@@ -309,10 +315,8 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
         for (Tile tile : ghostDoor) {
-            if (pacman.getY() + pacman.getTILE_SIZE() == tile.getY()
-                || ghost.getY() + ghost.getTILE_SIZE() == tile.getY()) {
-                if (pacman.getX() < tile.getX() + tile.getTILE_SIZE() && pacman.getX() + pacman.getTILE_SIZE() > tile.getX()
-                || ghost.getX() < tile.getX() + tile.getTILE_SIZE() && ghost.getX() + ghost.getTILE_SIZE() > tile.getX()) {
+            if (t.getY() + t.getTILE_SIZE() == tile.getY()) {
+                if (t.getX() < tile.getX() + tile.getTILE_SIZE() && t.getX() + t.getTILE_SIZE() > tile.getX()) {
                     return false;
                 }
             }
@@ -350,8 +354,9 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             if (Rect.intersects(wall, rect)) {
                 isColliding = true;
             }
+
             if (isColliding) {
-                switch (t.equals(pacman)?viewDirection: ghostPreviousDirection) {
+                switch (t.getClass().getName().equals("com.example.pacman.Pacman") ? viewDirection : ghostPreviousDirection) {
                     case 0:
                         t.setTilePosition(t.getX(), wall.bottom);
                         break;
@@ -365,21 +370,26 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                         t.setTilePosition(t.getX(), wall.top - t.getTILE_SIZE());
                         break;
                 }
-                isColliding = false;
+                if (t.getClass().getName().equals("com.example.pacman.Ghost")) {
+                    ghostDirection = calculateDirection();
+                }
             }
+            isColliding = false;
         }
 
-        for (Tile tile: ghostDoor) {
-            Rect player = pacman.getBounds();
+        for (
+                Tile tile : ghostDoor) {
+            Rect player = t.getBounds();
             Rect wall = tile.getBounds();
             if (Rect.intersects(wall, player)) {
                 isColliding = true;
             }
             if (isColliding && viewDirection == 3) {
-                pacman.setTilePosition(pacman.getX(), wall.top - pacman.getTILE_SIZE());
+                t.setTilePosition(t.getX(), wall.top - t.getTILE_SIZE());
             }
             isColliding = false;
         }
+
     }
 
     public void checkPelletCollision() {
@@ -420,14 +430,16 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         if (levelPos == 4 || levelPos == 3 || ghost.getBounds().bottom > door.getBounds().top) {
             insideCage = true;
             ghostPreviousDirection = 0;
+            if (pathUp(ghost)) {
+                ghost.moveUp(4);
+            } else {
+                ghost.moveLeft(4);
+            }
         } else {
             insideCage = false;
-        }
-        if (pathUp(ghost)) {
             ghost.moveUp(4);
-        } else {
-            ghost.moveLeft(4);
         }
+
     }
 
     public void drawPacMan(Canvas canvas) {
@@ -455,7 +467,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
-        switch (viewDirection){
+        switch (viewDirection) {
             case 0:
                 pacman.moveUp(4);
                 canvas.drawBitmap(pacManUp[currentPacManFrame], (float) (pacman.getX() + 7.5), (float) (pacman.getY() + 11.5), paint);
@@ -477,18 +489,26 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     public int calculateDirection() {
         if (Math.abs(pacman.getBounds().centerX() - ghost.getBounds().centerX()) < Math.abs(pacman.getBounds().centerY() - ghost.getBounds().centerY())) {
             if (ghost.getBounds().centerY() > pacman.getBounds().centerY()) {
+                ghostShortestPath = 0;
                 if (pathUp(ghost)) {
                     return 0;
                 }
-            } else if (pathDown(ghost)) {
-                return 3;
+            } else {
+                ghostShortestPath = 3;
+                if (pathDown(ghost)) {
+                    return 3;
+                }
             }
         } else {
             if (ghost.getBounds().centerX() > pacman.getBounds().centerX()) {
+                ghostShortestPath = 1;
                 if (pathLeft(ghost))
                     return 1;
-            } else if (pathRight(ghost)) {
-                return 2;
+            } else {
+                ghostShortestPath = 2;
+                if (pathRight(ghost)) {
+                    return 2;
+                }
             }
         }
         return 4;
@@ -496,7 +516,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
 
     public void drawGhost(Canvas canvas) {
         if (!insideCage) {
-            for (Tile tile: ghostDoor) {
+            for (Tile tile : ghostDoor) {
                 Rect enemy = ghost.getBounds();
                 Rect wall = tile.getBounds();
                 if (Rect.intersects(wall, enemy)) {
@@ -507,7 +527,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                 }
                 isColliding = false;
             }
-            switch (calculateDirection()) {
+            switch (ghostDirection) {
                 case 0:
                     ghost.moveUp(3);
                     ghostPreviousDirection = 0;
@@ -525,24 +545,120 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                     ghostPreviousDirection = 3;
                     break;
                 case 4:
+                    if (ghostShortestPath == 3) {
+                        if (ghost.getBounds().centerX() >= pacman.getBounds().centerX()) {
+                            if (pathLeft(ghost)) {
+                                ghostMoveLeft();
+                            } else if (pathRight(ghost)) {
+                                ghostMoveRight();
+                            } else {
+                                ghostMoveUp();
+                            }
+                        } else if (ghost.getBounds().centerX() < pacman.getBounds().centerX()) {
+                            if (pathRight(ghost)) {
+                                ghostMoveRight();
+                            } else if (pathLeft(ghost)) {
+                                ghostMoveLeft();
+                            } else {
+                                ghostMoveUp();
+                            }
+                        }
+                    } else if (ghostShortestPath == 0) {
+                        if (ghost.getBounds().centerX() >= pacman.getBounds().centerX()) {
+                            if (pathLeft(ghost)) {
+                                ghostMoveLeft();
+                            } else if (pathRight(ghost)) {
+                                ghostMoveRight();
+                            } else {
+                                ghostMoveDown();
+                            }
+                        } else if (ghost.getBounds().centerX() < pacman.getBounds().centerX()) {
+                            if (pathRight(ghost)) {
+                                ghostMoveRight();
+                            } else if (pathLeft(ghost)) {
+                                ghostMoveLeft();
+                            } else {
+                                ghostMoveDown();
+                            }
+                        }
+                    } else if (ghostShortestPath == 1) {
+                        if (ghost.getBounds().centerY() >= pacman.getBounds().centerY()) {
+                            if (pathUp(ghost)) {
+                                ghostMoveUp();
+                            } else if (pathDown(ghost)) {
+                                ghostMoveDown();
+                            } else {
+                                ghostMoveRight();
+                            }
+                        } else if (ghost.getBounds().centerY() < pacman.getBounds().centerY()) {
+                            if (pathDown(ghost)) {
+                                ghostMoveDown();
+                            } else if (pathLeft(ghost)) {
+                                ghostMoveLeft();
+                            } else {
+                                ghostMoveRight();
+                            }
+                        }
+                    } else if (ghostShortestPath == 2) {
+                        if (ghost.getBounds().centerY() >= pacman.getBounds().centerY()) {
+                            if (pathUp(ghost)) {
+                                ghostMoveUp();
+                            } else if (pathDown(ghost)) {
+                                ghostMoveDown();
+                            } else {
+                                ghostMoveLeft();
+                            }
+                        } else if (ghost.getBounds().centerY() < pacman.getBounds().centerY()) {
+                            if (pathDown(ghost)) {
+                                ghostMoveDown();
+                            } else if (pathUp(ghost)) {
+                                ghostMoveUp();
+                            } else {
+                                ghostMoveLeft();
+                            }
+                        }
+                    }
+                    ghostDirection = 5;
+                    break;
+                case 5:
                     switch (ghostPreviousDirection) {
                         case 0:
-                            ghost.moveUp(3);
+                            ghostMoveUp();
                             break;
                         case 1:
-                            ghost.moveLeft(3);
+                            ghostMoveLeft();
                             break;
                         case 2:
-                            ghost.moveRight(3);
+                            ghostMoveRight();
                             break;
                         case 3:
-                            ghost.moveDown(3);
+                            ghostMoveDown();
                             break;
                     }
                     break;
             }
         }
         canvas.drawBitmap(ghostBitmap, null, ghost.getBounds(), null);
+    }
+
+    private void ghostMoveUp() {
+        ghost.moveUp(3);
+        ghostPreviousDirection = 0;
+    }
+
+    private void ghostMoveDown() {
+        ghost.moveDown(3);
+        ghostPreviousDirection = 3;
+    }
+
+    private void ghostMoveLeft() {
+        ghost.moveLeft(3);
+        ghostPreviousDirection = 1;
+    }
+
+    private void ghostMoveRight() {
+        ghost.moveRight(3);
+        ghostPreviousDirection = 2;
     }
 
     @Override
@@ -583,7 +699,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         return true;
     }
 
-    public void wonGame(){
+    public void wonGame() {
         wonGame = true;
         Intent wonLost = new Intent(getContext(), WinLostActivity.class);
         wonLost.putExtra("wonLost", won);
@@ -591,7 +707,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         getContext().startActivity(wonLost);
     }
 
-    public void lostGame(){
+    public void lostGame() {
         wonGame = false;
         Intent wonLost = new Intent(getContext(), WinLostActivity.class);
         wonLost.putExtra("wonLost", lost);
@@ -599,12 +715,12 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
         getContext().startActivity(wonLost);
     }
 
-    private void loadBitmapImages(){
+    private void loadBitmapImages() {
         int spriteSize = TILE_SIZE - 15;
 
         pacManRight = new Bitmap[totalFrame];
         pacManRight[0] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
-                getResources(),R.drawable.pacman_right1), spriteSize, spriteSize, false);
+                getResources(), R.drawable.pacman_right1), spriteSize, spriteSize, false);
         pacManRight[1] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
                 getResources(), R.drawable.pacman_right2), spriteSize, spriteSize, false);
         pacManRight[2] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(
@@ -650,7 +766,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void createTileMap() {
-        tileMap = new int[][] {
+        tileMap = new int[][]{
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -658,7 +774,7 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                 {1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1},
                 {1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1},
                 {1, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 1, 2, 1},
-                {1, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1},
+                {1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1},
                 {1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1},
                 {1, 1, 1, 1, 2, 2, 2, 1, 3, 1, 2, 2, 2, 1, 1, 1, 1},
                 {2, 2, 2, 2, 2, 1, 1, 4, 4, 4, 1, 1, 2, 2, 2, 2, 2},
@@ -666,9 +782,9 @@ public class DrawGame extends SurfaceView implements SurfaceHolder.Callback {
                 {1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1},
                 {1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1},
                 {1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1},
-                {1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1},
-                {1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1},
-                {1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1},
+                {1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1},
+                {1, 2, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 2, 1},
+                {1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
         };
         rows = tileMap.length;
